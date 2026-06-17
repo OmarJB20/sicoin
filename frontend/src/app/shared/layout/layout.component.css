@@ -1,0 +1,38 @@
+.sidebar {
+  width: 250px;
+  background-color: #0f5d57;
+}
+
+.header-sicoin {
+  height: 70px;
+  background-color: #0f7c75;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 30px;
+
+  color: white;
+}
+
+.header-sicoin h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 400;
+}
+
+.usuario-info {
+  text-align: right;
+}
+
+.usuario-info small {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.usuario-info span {
+  font-size: 14px;
+}
+
+
