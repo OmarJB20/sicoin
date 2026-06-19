@@ -80,8 +80,33 @@ const detalleVenta = async (
 
 };
 
+const anularVenta = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const resultado =
+            await ventaModel.anularVenta(id);
+
+        res.json(resultado);
+
+    } catch (error) {
+
+        res.status(500).json({
+            mensaje: error.message
+        });
+
+    }
+
+};
+
 module.exports = {
     registrarVenta,
     listarVentas,
-    detalleVenta
+    detalleVenta,
+    anularVenta
 };

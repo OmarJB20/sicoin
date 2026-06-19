@@ -1,13 +1,20 @@
-<div class="d-flex">
+<div class="d-flex position-relative">
 
   <!-- Sidebar -->
   <div
-    class="sidebar text-white p-3 vh-100 d-flex flex-column"
+    class="sidebar text-white p-3 d-flex flex-column"
+    [class.sidebar-open]="sidebarOpen"
   >
 
     <div>
 
-      <h4 class="text-center mb-4">SICOIN</h4>
+      <div class="text-center mb-4">
+        <div class="d-flex align-items-center justify-content-center gap-3">
+          <img src="/logo.png" alt="Logo empresa" class="logo-sidebar">
+          <img src="/logo-instituto.jpg" alt="Logo instituto" class="logo-sidebar">
+        </div>
+        <small class="lema-sidebar">CONTRIBUCIÓN</small>
+      </div>
 
       <ul class="nav flex-column">
 
@@ -25,13 +32,13 @@
 
         <li class="nav-item">
           <a class="nav-link text-white" routerLink="/productos">
-            Productos - Gestión
+            Productos
           </a>
         </li>
 
         <li class="nav-item">
           <a class="nav-link text-white" routerLink="/ventas">
-            Control de Ventas
+            Ventas
           </a>
         </li>
 
@@ -65,13 +72,29 @@
 
   </div>
 
+  <!-- Overlay para móvil -->
+  <div
+    class="sidebar-overlay"
+    [class.show]="sidebarOpen"
+    (click)="closeSidebar()"
+  ></div>
+
   <!-- Área principal -->
-  <div class="flex-grow-1">
+  <div class="flex-grow-1 main-content">
 
     <!-- Header -->
     <div class="header-sicoin">
 
-      <h2>{{ tituloPagina }}</h2>
+      <div class="d-flex align-items-center gap-2">
+        <button
+          class="btn btn-hamburger d-lg-none"
+          (click)="toggleSidebar()"
+          aria-label="Toggle sidebar"
+        >
+          &#9776;
+        </button>
+        <h2>{{ tituloPagina }}</h2>
+      </div>
 
       <div class="usuario-info">
         <small>Administrador</small>

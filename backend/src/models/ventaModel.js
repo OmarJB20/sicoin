@@ -13,8 +13,8 @@ const crearVenta = async (cliente_id, productos) => {
         const ventaResult = await client.query(
             `
             INSERT INTO ventas
-            (cliente_id, total)
-            VALUES ($1, 0)
+            (cliente_id, total, estado)
+            VALUES ($1, 0, 'COMPLETADA')
             RETURNING *
             `,
             [cliente_id]
@@ -123,7 +123,12 @@ const obtenerVentas = async () => {
         SELECT
             v.*,
             c.nombre,
-            c.apellido
+            c.apellido,
+            (
+                SELECT COUNT(dv.id)
+                FROM detalle_ventas dv
+                WHERE dv.venta_id = v.id
+            ) AS num_productos
         FROM ventas v
         INNER JOIN clientes c
             ON v.cliente_id = c.id
@@ -148,8 +153,74 @@ const obtenerDetalleVenta = async (id) => {
     return result.rows;
 };
 
+const anularVenta = async (id) => {
+
+    const client = await pool.connect();
+
+    try {
+
+        await client.query('BEGIN');
+
+        const ventaResult = await client.query(
+            `SELECT * FROM ventas WHERE id = $1`,
+            [id]
+        );
+
+        if (ventaResult.rows.length === 0) {
+            throw new Error('Venta no encontrada');
+        }
+
+        const venta = ventaResult.rows[0];
+
+        if (venta.estado === 'ANULADA') {
+            throw new Error('La venta ya está anulada');
+        }
+
+        const detalleResult = await client.query(
+            `SELECT * FROM detalle_ventas WHERE venta_id = $1`,
+            [id]
+        );
+
+        for (const item of detalleResult.rows) {
+            await client.query(
+                `
+                UPDATE productos
+                SET stock = stock + $1
+                WHERE id = $2
+                `,
+                [item.cantidad, item.producto_id]
+            );
+        }
+
+        await client.query(
+            `
+            UPDATE ventas
+            SET estado = 'ANULADA'
+            WHERE id = $1
+            `,
+            [id]
+        );
+
+        await client.query('COMMIT');
+
+        return { mensaje: 'Venta anulada' };
+
+    } catch (error) {
+
+        await client.query('ROLLBACK');
+        throw error;
+
+    } finally {
+
+        client.release();
+
+    }
+
+};
+
 module.exports = {
     crearVenta,
     obtenerVentas,
-    obtenerDetalleVenta
+    obtenerDetalleVenta,
+    anularVenta
 };

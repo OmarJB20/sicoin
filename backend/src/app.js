@@ -9,6 +9,7 @@ const movimientoRoutes = require('./routes/movimientoRoutes');
 const ventaRoutes = require('./routes/ventaRoutes');
 const clienteRoutes = require('./routes/clienteRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
+const rolRoutes = require('./routes/rolRoutes');
 
 const app = express();
 
@@ -24,7 +25,7 @@ app.use('/api/movimientos', movimientoRoutes);
 app.use('/api/ventas', ventaRoutes);
 app.use('/api/clientes', clienteRoutes);
 app.use('/api/usuarios', usuarioRoutes);
-
+app.use('/api/roles', rolRoutes);
 
 // Ruta principal
 app.get('/', (req, res) => {

@@ -1,1 +1,197 @@
-<p>ventas works!</p>
+<div class="ventas-container">
+
+  <div class="contenedor-ventas">
+
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+      <div class="input-group input-buscar">
+        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+        <input type="text" class="form-control" placeholder="Buscar venta por ID, cliente o estado..." [(ngModel)]="busqueda" />
+      </div>
+      <button class="btn btn-header flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalRegistrarVenta" (click)="abrirModalRegistrar()">
+        <i class="bi bi-plus-circle me-1"></i>Registrar Venta
+      </button>
+    </div>
+
+    <!-- Tabla de Ventas -->
+    <div *ngIf="ventas.length === 0" class="alert alert-info text-center">No hay ventas registradas</div>
+
+    <div class="table-responsive" *ngIf="ventas.length > 0">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Fecha</th>
+            <th>Productos</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let v of ventasFiltradas">
+            <td class="fw-semibold">{{ v.id }}</td>
+            <td>{{ v.nombre }} {{ v.apellido }}</td>
+            <td class="text-nowrap">{{ v.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ v.num_productos || 0 }} producto(s)</td>
+            <td class="fw-semibold">${{ formatMoney(v.total) }}</td>
+            <td>
+              <span class="badge rounded-pill" [class.bg-success]="v.estado === 'COMPLETADA' || v.estado === 'Pendiente'" [class.bg-secondary]="v.estado === 'ANULADA'">
+                {{ v.estado || 'COMPLETADA' }}
+              </span>
+            </td>
+            <td class="text-center">
+              <div class="d-flex justify-content-center gap-1">
+                <button class="btn btn-sm btn-outline-info" title="Ver detalle" data-bs-toggle="modal" data-bs-target="#modalDetalleVenta" (click)="verDetalle(v)">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" title="Anular venta" (click)="anularVenta(v)" [disabled]="v.estado === 'ANULADA'">
+                  <i class="bi bi-x-circle"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ═══════ MODAL REGISTRAR VENTA ═══════ -->
+<div class="modal fade" id="modalRegistrarVenta" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Registrar Venta</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Cliente <span class="text-danger">*</span></label>
+            <select class="form-select" [(ngModel)]="formVenta.cliente_id" name="ventaCliente" required>
+              <option [ngValue]="''" disabled>Seleccionar cliente</option>
+              <option *ngFor="let c of clientes" [ngValue]="c.id">{{ c.nombre }} {{ c.apellido }}</option>
+            </select>
+          </div>
+        </div>
+
+        <hr class="my-3">
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <label class="form-label fw-semibold mb-0">Productos</label>
+          <button type="button" class="btn btn-sm btn-outline-success" (click)="agregarProducto()">
+            <i class="bi bi-plus-lg me-1"></i>Agregar producto
+          </button>
+        </div>
+
+        <div *ngIf="formVenta.productos.length === 0" class="alert alert-info text-center py-2 small">
+          Agregue al menos un producto
+        </div>
+
+        <div class="table-responsive" *ngIf="formVenta.productos.length > 0">
+          <table class="table table-sm align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Producto</th>
+                <th style="width:100px">Cantidad</th>
+                <th style="width:100px">Precio</th>
+                <th style="width:100px">Subtotal</th>
+                <th style="width:40px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of formVenta.productos; let i = index">
+                <td>
+                  <select class="form-select form-select-sm" [(ngModel)]="item.producto_id" name="prod_{{i}}" (change)="onProductoChange(i)" required>
+                    <option [ngValue]="''" disabled>Seleccionar</option>
+                    <option *ngFor="let p of productos" [ngValue]="p.id">{{ p.nombre }} (Stock: {{ p.stock }})</option>
+                  </select>
+                </td>
+                <td>
+                  <input type="number" class="form-control form-control-sm" [(ngModel)]="item.cantidad" name="cant_{{i}}" min="1" (input)="onCantidadChange(i)" />
+                </td>
+                <td class="text-nowrap">${{ formatMoney(item.precio) }}</td>
+                <td class="text-nowrap fw-semibold">${{ formatMoney(item.subtotal) }}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-danger p-0 px-1" (click)="eliminarProducto(i)" title="Quitar">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="text-end mt-3" *ngIf="formVenta.productos.length > 0">
+          <h5 class="mb-0">Total: <span class="text-primary">${{ formatMoney(calcularTotal()) }}</span></h5>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" id="btnCerrarModalVenta">Cancelar</button>
+        <button type="button" class="btn btn-guardar" (click)="registrarVenta()" [disabled]="cargando">
+          <span *ngIf="cargando" class="spinner-border spinner-border-sm me-1"></span>
+          Registrar Venta
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODAL DETALLE VENTA ═══════ -->
+<div class="modal fade" id="modalDetalleVenta" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detalle de Venta #{{ ventaSeleccionada?.id }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <span class="text-muted">Cliente: </span><span class="fw-semibold">{{ ventaSeleccionada?.nombre }} {{ ventaSeleccionada?.apellido }}</span><br>
+          <span class="text-muted">Fecha: </span><span class="fw-semibold">{{ ventaSeleccionada?.fecha | date:'dd/MM/yyyy HH:mm' }}</span><br>
+          <span class="text-muted">Estado: </span>
+          <span class="badge rounded-pill" [class.bg-success]="ventaSeleccionada?.estado === 'COMPLETADA' || ventaSeleccionada?.estado === 'Pendiente'" [class.bg-secondary]="ventaSeleccionada?.estado === 'ANULADA'">
+            {{ ventaSeleccionada?.estado || 'COMPLETADA' }}
+          </span>
+        </div>
+
+        <div *ngIf="detalleVenta.length === 0" class="alert alert-info text-center py-2 small">Cargando detalle...</div>
+
+        <div class="table-responsive" *ngIf="detalleVenta.length > 0">
+          <table class="table table-sm align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>P. Unitario</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let d of detalleVenta">
+                <td>{{ d.producto }}</td>
+                <td>{{ d.cantidad }}</td>
+                <td>${{ formatMoney(d.precio_unitario) }}</td>
+                <td class="fw-semibold">${{ formatMoney(d.subtotal) }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="table-light fw-bold">
+                <td colspan="3" class="text-end">Total:</td>
+                <td>${{ formatMoney(calcularTotalDetalle()) }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

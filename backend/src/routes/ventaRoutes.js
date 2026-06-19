@@ -8,7 +8,8 @@ require('../middlewares/authMiddleware');
 const {
     registrarVenta,
     listarVentas,
-    detalleVenta
+    detalleVenta,
+    anularVenta
 } = require('../controllers/ventaController');
 
 router.post(
@@ -27,6 +28,12 @@ router.get(
     '/:id',
     verificarToken,
     detalleVenta
+);
+
+router.put(
+    '/:id/anular',
+    verificarToken,
+    anularVenta
 );
 
 module.exports = router;

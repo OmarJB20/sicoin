@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 const usuarioModel =
 require('../models/usuarioModel');
 
@@ -60,8 +62,15 @@ const actualizarUsuario = async (req, res) => {
             apellido,
             correo,
             rol_id,
-            estado
+            estado,
+            password
         } = req.body;
+
+        let passwordHash = null;
+
+        if (password && password.trim() !== '') {
+            passwordHash = await bcrypt.hash(password, 10);
+        }
 
         const usuario =
             await usuarioModel.actualizarUsuario(
@@ -70,7 +79,8 @@ const actualizarUsuario = async (req, res) => {
                 apellido,
                 correo,
                 rol_id,
-                estado
+                estado,
+                passwordHash
             );
 
         res.json({

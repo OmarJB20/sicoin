@@ -1,1 +1,224 @@
-<p>usuarios works!</p>
+<div class="usuarios-container">
+
+  <div class="contenedor-usuarios">
+
+    <!-- Encabezado -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+      <div class="input-group input-buscar">
+        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Buscar por nombre, apellido o correo..."
+          [(ngModel)]="busqueda"
+        />
+      </div>
+      <button
+        class="btn btn-header flex-shrink-0"
+        data-bs-toggle="modal"
+        data-bs-target="#usuarioModal"
+        (click)="abrirModalCrear()"
+      >
+        + Nuevo Usuario
+      </button>
+    </div>
+
+    <!-- Cargando -->
+    <div *ngIf="cargando" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+
+    <!-- Grid de cards -->
+    <div *ngIf="!cargando" class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 row-cols-xxl-4 g-3">
+
+      <div class="col" *ngFor="let u of usuariosFiltrados">
+        <div class="card usuario-card h-100" [class.card-inactivo]="!u.estado">
+
+          <div class="card-body d-flex flex-column">
+
+            <!-- Fila superior: avatar + nombre + dropdown -->
+            <div class="d-flex justify-content-between align-items-start mb-2">
+
+              <div class="d-flex align-items-center gap-2">
+                <div class="avatar-usuario">
+                  {{ (u.nombre?.charAt(0) || '?') | uppercase }}
+                </div>
+                <div>
+                  <h6 class="mb-0 usuario-nombre">{{ u.nombre }} {{ u.apellido }}</h6>
+                </div>
+              </div>
+
+              <!-- Dropdown 3 puntitos -->
+              <div class="dropdown" *ngIf="u.estado">
+                <button
+                  class="btn btn-dots"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  &#x22EE;
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <a class="dropdown-item" (click)="abrirModalEditar(u)" data-bs-toggle="modal" data-bs-target="#usuarioModal">
+                      Editar
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" (click)="toggleEstado(u)">
+                      {{ u.estado ? 'Desactivar' : 'Activar' }}
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <a class="dropdown-item text-danger" (click)="confirmarEliminar(u)">
+                      Eliminar
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+
+            <!-- Correo -->
+            <p class="text-muted small mb-2">{{ u.correo }}</p>
+
+            <!-- Rol -->
+            <p class="mb-2 small">
+              <span class="fw-semibold">Rol:</span> {{ u.rol || getNombreRol(u.rol_id) }}
+            </p>
+
+            <!-- Estado -->
+            <div class="mt-auto">
+              <span class="badge rounded-pill" [class.bg-success]="u.estado" [class.bg-danger]="!u.estado">
+                {{ u.estado ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Mensaje si no hay usuarios -->
+      <div *ngIf="usuariosFiltrados.length === 0" class="col-12">
+        <div class="alert alert-info text-center">
+          {{ busqueda.trim() ? 'No se encontraron usuarios con ese criterio' : 'No hay usuarios registrados' }}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Modal crear/editar usuario -->
+<div class="modal fade" id="usuarioModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ editando ? 'Editar Usuario' : 'Nuevo Usuario' }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+
+        <form #usuarioForm="ngForm">
+
+          <div class="row g-3">
+
+            <!-- Nombre -->
+            <div class="col-sm-6">
+              <label class="form-label">Nombre <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="formData.nombre"
+                name="nombre"
+                required
+                placeholder="Nombre"
+              />
+            </div>
+
+            <!-- Apellido -->
+            <div class="col-sm-6">
+              <label class="form-label">Apellido <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="formData.apellido"
+                name="apellido"
+                required
+                placeholder="Apellido"
+              />
+            </div>
+
+            <!-- Correo -->
+            <div class="col-12">
+              <label class="form-label">Correo electrónico <span class="text-danger">*</span></label>
+              <input
+                type="email"
+                class="form-control"
+                [(ngModel)]="formData.correo"
+                name="correo"
+                required
+                placeholder="correo@ejemplo.com"
+              />
+            </div>
+
+            <!-- Contraseña -->
+            <div class="col-12">
+              <label class="form-label">
+                Contraseña
+                <span *ngIf="!editando" class="text-danger">*</span>
+                <span *ngIf="editando" class="text-muted small">(dejar vacío para no cambiar)</span>
+              </label>
+              <input
+                type="password"
+                class="form-control"
+                [(ngModel)]="formData.password"
+                name="password"
+                [required]="!editando"
+                placeholder="Contraseña"
+              />
+            </div>
+
+            <!-- Rol -->
+            <div class="col-12">
+              <label class="form-label">Rol <span class="text-danger">*</span></label>
+              <select
+                class="form-select"
+                [(ngModel)]="formData.rol_id"
+                name="rol_id"
+                required
+              >
+                <option [ngValue]="null" disabled>Seleccionar rol</option>
+                <option *ngFor="let r of roles" [ngValue]="r.id">
+                  {{ r.nombre }}
+                </option>
+              </select>
+            </div>
+
+          </div>
+
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          data-bs-dismiss="modal"
+          id="btnCerrarModal"
+        >
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-guardar" (click)="guardar()">
+          {{ editando ? 'Guardar Cambios' : 'Crear Usuario' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

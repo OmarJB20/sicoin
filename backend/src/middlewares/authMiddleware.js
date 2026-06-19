@@ -6,16 +6,20 @@ const verificarToken = (
     next
 ) => {
 
-    const token =
+    const authHeader =
         req.header('Authorization');
 
-    if (!token) {
+    if (!authHeader) {
 
         return res.status(401).json({
             mensaje: 'Acceso denegado'
         });
 
     }
+
+    const token = authHeader.startsWith('Bearer ')
+        ? authHeader.slice(7)
+        : authHeader;
 
     try {
 

@@ -91,7 +91,7 @@ const actualizarProducto = async (
             stock = $5,
             stock_minimo = $6,
             imagen = $7,
-            estado = $8,
+            estado = COALESCE($8, estado),
             updated_at = CURRENT_TIMESTAMP
         WHERE id = $9
         RETURNING *

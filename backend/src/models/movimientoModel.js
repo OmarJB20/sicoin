@@ -99,6 +99,7 @@ const obtenerMovimientos = async () => {
         FROM movimientos_inventario m
         INNER JOIN productos p
             ON p.id = m.producto_id
+        WHERE p.estado = true
         ORDER BY m.fecha DESC
     `);
 
