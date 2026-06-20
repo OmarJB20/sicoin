@@ -1,1 +1,225 @@
-<p>reportes works!</p>
+<div class="reportes-container">
+
+  <div class="contenedor-reportes">
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs nav-tabs-reportes mb-4">
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="reporteActivo === 'inventario'" (click)="cambiarReporte('inventario')" href="javascript:void(0)">Inventario</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="reporteActivo === 'ventas'" (click)="cambiarReporte('ventas')" href="javascript:void(0)">Ventas</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="reporteActivo === 'clientes'" (click)="cambiarReporte('clientes')" href="javascript:void(0)">Clientes</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="reporteActivo === 'mas-vendidos'" (click)="cambiarReporte('mas-vendidos')" href="javascript:void(0)">M&aacute;s Vendidos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="reporteActivo === 'movimientos'" (click)="cambiarReporte('movimientos')" href="javascript:void(0)">Movimientos</a>
+      </li>
+    </ul>
+
+    <!-- Botones PDF / Imprimir -->
+    <div class="d-flex gap-4 mb-3 justify-content-end">
+      <button class="btn btn-header btn-sm" (click)="generarPDF()" [disabled]="cargando">
+        <span *ngIf="cargando" class="spinner-border spinner-border-sm me-1"></span>
+        <i class="bi bi-filetype-pdf me-1"></i>Generar PDF
+      </button>
+      <button class="btn btn-outline-secondary btn-sm" (click)="imprimir()">
+        <i class="bi bi-printer me-1"></i>Imprimir
+      </button>
+    </div>
+
+    <!-- Filtro fechas (solo Más Vendidos) -->
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3" *ngIf="reporteActivo === 'mas-vendidos'">
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label mb-0 text-nowrap small">Desde:</label>
+        <input type="date" class="form-control form-control-sm" style="max-width:160px" [(ngModel)]="fechaDesde" />
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label mb-0 text-nowrap small">Hasta:</label>
+        <input type="date" class="form-control form-control-sm" style="max-width:160px" [(ngModel)]="fechaHasta" />
+      </div>
+      <button class="btn btn-header btn-sm" (click)="consultarMasVendidos()">Consultar</button>
+    </div>
+
+    <!-- Contenido del reporte -->
+    <div id="reporte-contenido">
+
+      <!-- Report header (screen + print + PDF) -->
+      <div class="report-header">
+        <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center me-4">
+            <img [src]="logoEmpresa" alt="Logo empresa" class="report-logo">
+          </div>
+          <div class="flex-grow-1">
+            <div class="report-system-name">SICOIN</div>
+            <div class="report-subtitle">Sistema de Control de Inventario</div>
+          </div>
+          <div class="report-date">{{ fechaGeneracion }}</div>
+        </div>
+        <hr class="report-divider">
+        <div class="report-title">{{ tituloReporte }}</div>
+      </div>
+
+      <!-- ═══════ INVENTARIO ═══════ -->
+      <div *ngIf="reporteActivo === 'inventario'">
+        <div *ngIf="inventario.length === 0" class="alert alert-info text-center">No hay productos registrados</div>
+        <div class="table-responsive" *ngIf="inventario.length > 0">
+          <table class="table table-hover align-middle mb-0 report-table">
+            <thead class="table-light">
+              <tr>
+                <th>C&oacute;digo</th>
+                <th>Producto</th>
+                <th>Categor&iacute;a</th>
+                <th>Stock</th>
+                <th>Stock M&iacute;nimo</th>
+                <th>Precio</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of inventario">
+                <td class="text-muted">{{ p.id }}</td>
+                <td>{{ p.nombre }}</td>
+                <td>{{ p.categoria }}</td>
+                <td>
+                  <span class="badge rounded-pill" [class.bg-success]="p.stock > (p.stock_minimo || 0)" [class.bg-warning]="p.stock <= (p.stock_minimo || 0) && p.stock > 0" [class.bg-secondary]="p.stock === 0">
+                    {{ p.stock }}
+                  </span>
+                </td>
+                <td>{{ p.stock_minimo || 0 }}</td>
+                <td>${{ formatMoney(p.precio) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══════ VENTAS ═══════ -->
+      <div *ngIf="reporteActivo === 'ventas'">
+        <div *ngIf="ventas.length === 0" class="alert alert-info text-center">No hay ventas registradas</div>
+        <div class="table-responsive" *ngIf="ventas.length > 0">
+          <table class="table table-hover align-middle mb-0 report-table">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Productos</th>
+                <th>Total</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let v of ventas">
+                <td class="fw-semibold">{{ v.id }}</td>
+                <td>{{ v.nombre }} {{ v.apellido }}</td>
+                <td class="text-nowrap">{{ v.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ v.num_productos || 0 }} producto(s)</td>
+                <td>${{ formatMoney(v.total) }}</td>
+                <td>
+                  <span class="badge rounded-pill" [class.bg-success]="v.estado === 'COMPLETADA' || v.estado === 'Pendiente'" [class.bg-secondary]="v.estado === 'ANULADA'">
+                    {{ v.estado || 'COMPLETADA' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══════ CLIENTES ═══════ -->
+      <div *ngIf="reporteActivo === 'clientes'">
+        <div *ngIf="clientes.length === 0" class="alert alert-info text-center">No hay clientes registrados</div>
+        <div class="table-responsive" *ngIf="clientes.length > 0">
+          <table class="table table-hover align-middle mb-0 report-table">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Correo</th>
+                <th>Tel&eacute;fono</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of clientes">
+                <td class="text-muted">{{ c.id }}</td>
+                <td>{{ c.nombre }}</td>
+                <td>{{ c.apellido }}</td>
+                <td>{{ c.correo }}</td>
+                <td>{{ c.telefono || '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══════ MÁS VENDIDOS ═══════ -->
+      <div *ngIf="reporteActivo === 'mas-vendidos'">
+        <div *ngIf="masVendidos.length === 0" class="alert alert-info text-center">No hay datos para mostrar</div>
+        <div class="table-responsive" *ngIf="masVendidos.length > 0">
+          <table class="table table-hover align-middle mb-0 report-table">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>Producto</th>
+                <th>Categor&iacute;a</th>
+                <th>Total Vendido</th>
+                <th>Ingresos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let m of masVendidos; let i = index">
+                <td class="text-muted">{{ i + 1 }}</td>
+                <td>{{ m.nombre }}</td>
+                <td>{{ m.categoria }}</td>
+                <td><strong>{{ m.total_vendido }}</strong></td>
+                <td>${{ formatMoney(m.total_ingresos) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══════ MOVIMIENTOS ═══════ -->
+      <div *ngIf="reporteActivo === 'movimientos'">
+        <div *ngIf="movimientos.length === 0" class="alert alert-info text-center">No hay movimientos registrados</div>
+        <div class="table-responsive" *ngIf="movimientos.length > 0">
+          <table class="table table-hover align-middle mb-0 report-table">
+            <thead class="table-light">
+              <tr>
+                <th>Fecha</th>
+                <th>Producto</th>
+                <th>Tipo</th>
+                <th>Cantidad</th>
+                <th>Observaci&oacute;n</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let m of movimientos">
+                <td class="text-nowrap">{{ m.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ m.producto }}</td>
+                <td>
+                  <span class="badge rounded-pill" [class.bg-success]="m.tipo_movimiento === 'ENTRADA'" [class.bg-danger]="m.tipo_movimiento === 'SALIDA'">
+                    {{ m.tipo_movimiento }}
+                  </span>
+                </td>
+                <td>{{ m.cantidad }}</td>
+                <td class="text-muted small">{{ m.observacion || '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Footer (solo en print) -->
+      <div class="report-footer">SICOIN &copy; 2026 &mdash; Sistema de Control de Inventario</div>
+
+    </div>
+
+  </div>
+
+</div>

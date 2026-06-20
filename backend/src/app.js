@@ -10,6 +10,7 @@ const ventaRoutes = require('./routes/ventaRoutes');
 const clienteRoutes = require('./routes/clienteRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const rolRoutes = require('./routes/rolRoutes');
+const reporteRoutes = require('./routes/reporteRoutes');
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/api/ventas', ventaRoutes);
 app.use('/api/clientes', clienteRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/roles', rolRoutes);
+app.use('/api/reportes', reporteRoutes);
 
 // Ruta principal
 app.get('/', (req, res) => {
