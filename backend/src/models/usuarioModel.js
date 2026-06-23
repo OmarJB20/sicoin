@@ -74,6 +74,8 @@ const obtenerUsuarioPorId = async (id) => {
             u.apellido,
             u.correo,
             u.estado,
+            u.rol_id,
+            u.imagen,
             u.created_at,
             r.nombre AS rol
         FROM usuarios u
@@ -94,7 +96,8 @@ const actualizarUsuario = async (
     correo,
     rol_id,
     estado,
-    password
+    password,
+    imagen
 ) => {
 
     if (password) {
@@ -108,8 +111,9 @@ const actualizarUsuario = async (
                 rol_id = $4,
                 estado = $5,
                 password = $6,
+                imagen = COALESCE($7, imagen),
                 updated_at = CURRENT_TIMESTAMP
-            WHERE id = $7
+            WHERE id = $8
             RETURNING *
         `,
         [
@@ -119,6 +123,7 @@ const actualizarUsuario = async (
             rol_id,
             estado,
             password,
+            imagen,
             id
         ]);
 
@@ -134,8 +139,9 @@ const actualizarUsuario = async (
             correo = $3,
             rol_id = $4,
             estado = $5,
+            imagen = COALESCE($6, imagen),
             updated_at = CURRENT_TIMESTAMP
-        WHERE id = $6
+        WHERE id = $7
         RETURNING *
     `,
     [
@@ -144,6 +150,7 @@ const actualizarUsuario = async (
         correo,
         rol_id,
         estado,
+        imagen,
         id
     ]);
 

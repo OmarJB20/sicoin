@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 
 const authRoutes = require('./routes/authRoutes');
@@ -11,12 +12,14 @@ const clienteRoutes = require('./routes/clienteRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const rolRoutes = require('./routes/rolRoutes');
 const reporteRoutes = require('./routes/reporteRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 
 const app = express();
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // Rutas de autenticación
 app.use('/api/auth', authRoutes);
@@ -28,6 +31,7 @@ app.use('/api/clientes', clienteRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/roles', rolRoutes);
 app.use('/api/reportes', reporteRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Ruta principal
 app.get('/', (req, res) => {

@@ -66,6 +66,8 @@ const actualizarUsuario = async (req, res) => {
             password
         } = req.body;
 
+        const imagen = req.file ? '/uploads/' + req.file.filename : req.body.imagen;
+
         let passwordHash = null;
 
         if (password && password.trim() !== '') {
@@ -80,7 +82,8 @@ const actualizarUsuario = async (req, res) => {
                 correo,
                 rol_id,
                 estado,
-                passwordHash
+                passwordHash,
+                imagen
             );
 
         res.json({

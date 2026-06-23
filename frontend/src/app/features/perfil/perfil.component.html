@@ -1,1 +1,71 @@
-<p>perfil works!</p>
+<div class="perfil-container">
+
+  <div *ngIf="cargando" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2">Cargando perfil...</p>
+  </div>
+
+  <div class="perfil-card" *ngIf="!cargando">
+
+    <div class="perfil-foto" (click)="editando ? fotoInput.click() : null">
+      <img
+        [src]="fotoPreview || 'assets/img/user.jpg'"
+        class="foto-usuario"
+        [class.clickable]="editando"
+      >
+      <input
+        #fotoInput
+        type="file"
+        accept=".jpg,.jpeg,.png"
+        (change)="seleccionarFoto($event)"
+        hidden
+      >
+      <p class="foto-nombre"><strong>{{ usuario.nombre }} {{ usuario.apellido }}</strong></p>
+      <span class="badge bg-secondary">{{ usuario.rol }}</span>
+      <p *ngIf="editando" class="cambiar-foto">Haz clic para cambiar foto</p>
+    </div>
+
+    <div class="perfil-formulario">
+
+      <div class="campo">
+        <label>Nombre</label>
+        <input type="text" [(ngModel)]="form.nombre" [disabled]="!editando">
+      </div>
+
+      <div class="campo">
+        <label>Apellido</label>
+        <input type="text" [(ngModel)]="form.apellido" [disabled]="!editando">
+      </div>
+
+      <div class="campo">
+        <label>Correo electrónico</label>
+        <input type="email" [(ngModel)]="form.correo" [disabled]="!editando">
+      </div>
+
+      <div class="campo" *ngIf="editando">
+        <label>Nueva contraseña <small>(dejar vacío para mantener actual)</small></label>
+        <input type="password" [(ngModel)]="form.password" placeholder="••••••••">
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="contenedor-boton" *ngIf="!cargando">
+
+    <button *ngIf="!editando" (click)="editar()" class="btn btn-primary">
+      <i class="bi bi-pencil"></i> Editar
+    </button>
+
+    <ng-container *ngIf="editando">
+      <button (click)="guardar()" class="btn btn-success">
+        <i class="bi bi-check-lg"></i> Guardar cambios
+      </button>
+      <button (click)="cancelar()" class="btn btn-secondary ms-2">
+        Cancelar
+      </button>
+    </ng-container>
+
+  </div>
+
+</div>

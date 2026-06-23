@@ -55,7 +55,9 @@ export class ProductosComponent implements OnInit {
   ngOnInit() {
     this.cargarProductos();
     this.cargarCategorias();
-    this.cargarMovimientos();
+    if (this.tabActivo === 'inventario') {
+      this.cargarMovimientos();
+    }
   }
 
   cambiarTab(tab: string) {

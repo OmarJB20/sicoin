@@ -1,4 +1,67 @@
-<div class="container mt-5">
-  <h1>Dashboard SICOIN</h1>
-  <p>Bienvenido al sistema</p>
+<div class="dashboard-container">
+
+  <!-- Cards superiores -->
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <div class="card-header">
+        <span>Total Ventas</span>
+      </div>
+      <h3>${{ resumen.totalVentas }}</h3>
+    </div>
+
+    <div class="stat-card">
+      <div class="card-header">
+        <span>Stock</span>
+      </div>
+      <h3>{{ resumen.totalStock }}</h3>
+    </div>
+
+    <div class="stat-card">
+      <div class="card-header">
+        <span>Productos</span>
+      </div>
+      <h3>{{ resumen.totalProductos }}</h3>
+    </div>
+
+    <div class="stat-card">
+      <div class="card-header">
+        <span>Reportes</span>
+      </div>
+      <h3>{{ resumen.totalReportes }}</h3>
+    </div>
+
+  </div>
+
+  <!-- Sección inferior -->
+  <div class="bottom-grid">
+
+    <!-- Gráfico Ventas Semanales -->
+    <div class="chart-card">
+
+      <h2>Ventas semanales</h2>
+
+      <div class="chart">
+        <div class="bar" *ngFor="let v of ventasSemanales" [style.height.%]="(v.total / maxVentaSemanal) * 100">
+          <span>{{ v.nombre }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Gráfico Ventas por Categoría -->
+    <div class="chart-card">
+
+      <h2>Ventas por Categoría</h2>
+
+      <div class="chart">
+        <div class="bar secondary" *ngFor="let c of ventasPorCategoria" [style.height.%]="(c.total / maxVentaCategoria) * 100">
+          <span>{{ c.categoria }} ({{ c.porcentaje }}%)</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
 </div>

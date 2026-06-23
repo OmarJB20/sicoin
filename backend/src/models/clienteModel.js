@@ -6,7 +6,6 @@ const obtenerClientes = async () => {
         `
         SELECT *
         FROM clientes
-        WHERE estado = true
         ORDER BY id ASC
         `
     );

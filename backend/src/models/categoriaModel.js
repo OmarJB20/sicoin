@@ -6,7 +6,6 @@ const obtenerCategorias = async () => {
         `
         SELECT *
         FROM categorias
-        WHERE estado = true
         ORDER BY id ASC
         `
     );

@@ -5,6 +5,9 @@ const router = express.Router();
 const verificarToken =
 require('../middlewares/authMiddleware');
 
+const upload =
+require('../middlewares/uploadMiddleware');
+
 const {
     listarUsuarios,
     obtenerUsuario,
@@ -27,6 +30,7 @@ router.get(
 router.put(
     '/:id',
     verificarToken,
+    upload.single('imagen'),
     actualizarUsuario
 );
 
