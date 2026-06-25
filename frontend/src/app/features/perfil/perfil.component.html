@@ -8,8 +8,12 @@
   <div class="perfil-card" *ngIf="!cargando">
 
     <div class="perfil-foto" (click)="editando ? fotoInput.click() : null">
+      <div *ngIf="!fotoPreview" class="foto-usuario rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" [class.clickable]="editando" style="width:100px;height:100px;font-size:2.5rem;background:#0f7c75;">
+        {{ (usuario.nombre?.charAt(0) || '') + (usuario.apellido?.charAt(0) || '') || '?' }}
+      </div>
       <img
-        [src]="fotoPreview || 'assets/img/user.jpg'"
+        *ngIf="fotoPreview"
+        [src]="fotoPreview"
         class="foto-usuario"
         [class.clickable]="editando"
       >

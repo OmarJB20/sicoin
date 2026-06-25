@@ -10,31 +10,6 @@
   border: 1px solid #eaeaea;
 }
 
-/* ─── Tabs ─── */
-.nav-tabs-productos {
-  border-bottom: 2px solid #e9ecef;
-}
-
-.nav-tabs-productos .nav-link {
-  border: none;
-  color: #6c757d;
-  font-weight: 500;
-  padding: 8px 20px;
-  margin-bottom: -2px;
-  cursor: pointer;
-}
-
-.nav-tabs-productos .nav-link.active {
-  color: #0f7c75;
-  border-bottom: 3px solid #0f7c75;
-  background: transparent;
-}
-
-.nav-tabs-productos .nav-link:hover {
-  color: #0f7c75;
-  border-bottom: 3px solid transparent;
-}
-
 /* ─── Botones ─── */
 .btn-header {
   background-color: #0f7c75;
@@ -124,11 +99,20 @@
   color: #333;
 }
 
+/* ─── Preview en modal ─── */
+.img-preview-modal {
+  max-width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  background: #f8f9fa;
+}
+
 /* ─── Imagen producto ─── */
 .producto-imagen {
-  height: 120px;
-  object-fit: cover;
+  height: 140px;
+  object-fit: contain;
   border: 1px solid #eee;
+  background: #f8f9fa;
 }
 
 /* ─── Badges ─── */

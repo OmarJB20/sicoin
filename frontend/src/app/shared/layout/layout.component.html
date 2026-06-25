@@ -18,37 +18,72 @@
 
       <ul class="nav flex-column">
 
-        <li class="nav-item">
+        <li class="nav-item" routerLinkActive="active">
           <a class="nav-link text-white" routerLink="/dashboard">
             Dashboard
           </a>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item" routerLinkActive="active">
           <a class="nav-link text-white" routerLink="/usuarios">
             Usuarios
           </a>
         </li>
 
-        <li class="nav-item">
-          <a class="nav-link text-white" routerLink="/productos">
-            Productos
-          </a>
+        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:false}">
+          <div class="d-flex align-items-center">
+            <a class="nav-link text-white flex-grow-1" routerLink="/productos">
+              Productos
+            </a>
+            <button class="btn btn-sm text-white border-0 me-1" (click)="toggleSubNav($event)">
+              <i class="bi" [class.bi-chevron-down]="!subNavOpen" [class.bi-chevron-up]="subNavOpen"></i>
+            </button>
+          </div>
+          <div class="sub-nav mt-1" *ngIf="subNavOpen">
+            <a class="nav-link text-white py-1 small ps-4 sub-link" routerLink="/productos/categorias" routerLinkActive="active">
+              <i class="bi bi-dot me-1"></i>Categorías
+            </a>
+            <a class="nav-link text-white py-1 small ps-4 sub-link" routerLink="/productos/inventario" routerLinkActive="active">
+              <i class="bi bi-dot me-1"></i>Inventario
+            </a>
+          </div>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item" routerLinkActive="active">
           <a class="nav-link text-white" routerLink="/ventas">
             Ventas
           </a>
         </li>
 
-        <li class="nav-item">
-          <a class="nav-link text-white" routerLink="/reportes">
-            Reportes
-          </a>
+        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:false}">
+          <div class="d-flex align-items-center">
+            <a class="nav-link text-white flex-grow-1" routerLink="/reportes">
+              Reportes
+            </a>
+            <button class="btn btn-sm text-white border-0 me-1" (click)="toggleSubNavReportes($event)">
+              <i class="bi" [class.bi-chevron-down]="!subNavReportesOpen" [class.bi-chevron-up]="subNavReportesOpen"></i>
+            </button>
+          </div>
+          <div class="sub-nav mt-1" *ngIf="subNavReportesOpen">
+            <a class="nav-link text-white py-1 small ps-4 sub-link" routerLink="/reportes/inventario" routerLinkActive="active">
+              <i class="bi bi-dot me-1"></i>Inventario
+            </a>
+            <a class="nav-link text-white py-1 small ps-4 sub-link" routerLink="/reportes/ventas" routerLinkActive="active">
+              <i class="bi bi-dot me-1"></i>Ventas
+            </a>
+            <a class="nav-link text-white py-1 small ps-4 sub-link" routerLink="/reportes/clientes" routerLinkActive="active">
+              <i class="bi bi-dot me-1"></i>Clientes
+            </a>
+            <a class="nav-link text-white py-1 small ps-4 sub-link" routerLink="/reportes/mas-vendidos" routerLinkActive="active">
+              <i class="bi bi-dot me-1"></i>Más Vendidos
+            </a>
+            <a class="nav-link text-white py-1 small ps-4 sub-link" routerLink="/reportes/movimientos" routerLinkActive="active">
+              <i class="bi bi-dot me-1"></i>Movimientos
+            </a>
+          </div>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item" routerLinkActive="active">
           <a class="nav-link text-white" routerLink="/perfil">
             Perfil
           </a>
@@ -96,8 +131,39 @@
         <h2>{{ tituloPagina }}</h2>
       </div>
 
-      <div class="usuario-info">
-        <small>Administrador</small>
+      <div class="d-flex align-items-center gap-3">
+        <!-- Campana notificaciones -->
+        <div class="notif-container position-relative">
+          <button class="btn btn-notif" (click)="toggleNotificaciones()" aria-label="Notificaciones">
+            <i class="bi bi-bell"></i>
+            <span class="notif-badge" *ngIf="alertas.length > 0">{{ alertas.length }}</span>
+          </button>
+
+          <div class="notif-dropdown" *ngIf="showNotificaciones">
+            <div class="notif-header">
+              <i class="bi bi-bell-fill"></i>
+              <span>Alertas de Stock</span>
+            </div>
+            <div class="notif-lista">
+              <div class="notif-item" *ngFor="let a of alertas">
+                <div class="notif-info">
+                  <span class="notif-mensaje">{{ a.mensaje }}</span>
+                  <span class="notif-fecha">{{ a.created_at | date:'dd/MM HH:mm' }}</span>
+                </div>
+                <button class="btn btn-sm btn-outline-light" (click)="marcarLeida(a.id)" title="Marcar como leída">
+                  <i class="bi bi-check-lg"></i>
+                </button>
+              </div>
+              <div class="notif-empty" *ngIf="alertas.length === 0">
+                No hay alertas pendientes
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="usuario-info">
+          <small>Administrador</small>
+        </div>
       </div>
 
     </div>

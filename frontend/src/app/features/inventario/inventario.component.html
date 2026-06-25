@@ -1,1 +1,148 @@
-<p>inventario works!</p>
+<div class="inventario-container">
+
+  <div class="contenedor-inventario">
+
+    <!-- Product Stock Table -->
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2 py-3">
+        <span class="fw-semibold fs-6">Existencias</span>
+        <div class="d-flex gap-2">
+          <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalMovimiento" (click)="abrirModalMovimiento('ENTRADA')">
+            <i class="bi bi-plus-circle me-1"></i>Registrar Entrada
+          </button>
+          <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalMovimiento" (click)="abrirModalMovimiento('SALIDA')">
+            <i class="bi bi-dash-circle me-1"></i>Registrar Salida
+          </button>
+        </div>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Stock Actual</th>
+                <th>Prom. Diario</th>
+                <th>Stock Mín. Sugerido</th>
+                <th>Precio Venta</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of productos">
+                <td class="text-muted">{{ p.id }}</td>
+                <td>{{ p.nombre }}</td>
+                <td>
+                  <span class="badge rounded-pill"
+                    [class.bg-success]="p.stock > (getStats(p.id).stock_minimo_sugerido || p.stock_minimo)"
+                    [class.bg-warning]="p.stock > 0 && p.stock <= (getStats(p.id).stock_minimo_sugerido || p.stock_minimo)"
+                    [class.bg-secondary]="p.stock === 0">
+                    {{ p.stock }}
+                  </span>
+                </td>
+                <td>{{ getStats(p.id).promedio_diario || 0 }}</td>
+                <td>
+                  <ng-container *ngIf="(getStats(p.id).stock_minimo_sugerido || p.stock_minimo) > 0">
+                    <span class="badge rounded-pill"
+                      [class.bg-warning]="p.stock <= (getStats(p.id).stock_minimo_sugerido || p.stock_minimo)"
+                      [class.bg-success]="p.stock > (getStats(p.id).stock_minimo_sugerido || p.stock_minimo)">
+                      {{ getStats(p.id).stock_minimo_sugerido || p.stock_minimo }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="!(getStats(p.id).stock_minimo_sugerido || p.stock_minimo)">—</ng-container>
+                </td>
+                <td>${{ p.precio }}</td>
+                <td>
+                  <span class="badge rounded-pill"
+                    [class.bg-success]="p.stock > (getStats(p.id).stock_minimo_sugerido || p.stock_minimo)"
+                    [class.bg-warning]="p.stock > 0 && p.stock <= (getStats(p.id).stock_minimo_sugerido || p.stock_minimo)"
+                    [class.bg-danger]="p.stock === 0">
+                    <ng-container [ngSwitch]="true">
+                      <span *ngSwitchCase="p.stock === 0">Agotado</span>
+                      <span *ngSwitchCase="p.stock <= (getStats(p.id).stock_minimo_sugerido || p.stock_minimo) && p.stock > 0">Stock bajo</span>
+                      <span *ngSwitchDefault>Disponible</span>
+                    </ng-container>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Movements History -->
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white py-3">
+        <span class="fw-semibold fs-6">Historial de movimientos</span>
+      </div>
+      <div class="card-body p-0">
+        <div *ngIf="movimientos.length === 0" class="alert alert-info text-center m-3">No hay movimientos registrados</div>
+        <div class="table-responsive" *ngIf="movimientos.length > 0">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Fecha</th>
+                <th>Producto</th>
+                <th>Tipo</th>
+                <th>Cantidad</th>
+                <th>Observación</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let m of movimientos">
+                <td class="text-nowrap">{{ m.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ m.producto }}</td>
+                <td>
+                  <span class="badge rounded-pill" [class.bg-success]="m.tipo_movimiento === 'ENTRADA'" [class.bg-danger]="m.tipo_movimiento === 'SALIDA'">
+                    {{ m.tipo_movimiento }}
+                  </span>
+                </td>
+                <td>{{ m.cantidad }}</td>
+                <td class="text-muted small">{{ m.observacion || '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ═══════ MODAL MOVIMIENTO ═══════ -->
+<div class="modal fade" id="modalMovimiento" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Registrar {{ tipoMovimientoActual }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Producto <span class="text-danger">*</span></label>
+            <select class="form-select" [(ngModel)]="formMovimiento.producto_id" name="movProd" required>
+              <option [ngValue]="''" disabled>Seleccionar producto</option>
+              <option *ngFor="let p of productos" [ngValue]="p.id">{{ p.nombre }} (Stock: {{ p.stock }})</option>
+            </select>
+          </div>
+          <div class="col-sm-6">
+            <label class="form-label">Cantidad <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" [(ngModel)]="formMovimiento.cantidad" name="movCant" required placeholder="0" min="1" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">Observación</label>
+            <input type="text" class="form-control" [(ngModel)]="formMovimiento.observacion" name="movObs" placeholder="Opcional" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" id="btnCerrarModalMovimiento">Cancelar</button>
+        <button type="button" class="btn btn-guardar" (click)="guardarMovimiento()">Registrar</button>
+      </div>
+    </div>
+  </div>
+</div>

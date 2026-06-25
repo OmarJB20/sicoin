@@ -176,9 +176,7 @@ export class VentasComponent implements OnInit {
 
   calcularTotalDetalle(): number {
     return this.detalleVenta.reduce((sum: number, d: any) => sum + Number(d.subtotal || 0), 0);
-  }
-
-  formatMoney(value: any): string {
+  }  formatMoney(value: any): string {
     return Number(value || 0).toFixed(2);
   }
 

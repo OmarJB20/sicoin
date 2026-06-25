@@ -2,24 +2,7 @@
 
   <div class="contenedor-reportes">
 
-    <!-- Tabs -->
-    <ul class="nav nav-tabs nav-tabs-reportes mb-4">
-      <li class="nav-item">
-        <a class="nav-link" [class.active]="reporteActivo === 'inventario'" (click)="cambiarReporte('inventario')" href="javascript:void(0)">Inventario</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [class.active]="reporteActivo === 'ventas'" (click)="cambiarReporte('ventas')" href="javascript:void(0)">Ventas</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [class.active]="reporteActivo === 'clientes'" (click)="cambiarReporte('clientes')" href="javascript:void(0)">Clientes</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [class.active]="reporteActivo === 'mas-vendidos'" (click)="cambiarReporte('mas-vendidos')" href="javascript:void(0)">M&aacute;s Vendidos</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [class.active]="reporteActivo === 'movimientos'" (click)="cambiarReporte('movimientos')" href="javascript:void(0)">Movimientos</a>
-      </li>
-    </ul>
+
 
     <!-- Botones PDF / Imprimir -->
     <div class="d-flex gap-4 mb-3 justify-content-end">
@@ -75,7 +58,7 @@
                 <th>Producto</th>
                 <th>Categor&iacute;a</th>
                 <th>Stock</th>
-                <th>Stock M&iacute;nimo</th>
+                <th>Stock M&iacute;n. Sugerido</th>
                 <th>Precio</th>
               </tr>
             </thead>
@@ -85,11 +68,11 @@
                 <td>{{ p.nombre }}</td>
                 <td>{{ p.categoria }}</td>
                 <td>
-                  <span class="badge rounded-pill" [class.bg-success]="p.stock > (p.stock_minimo || 0)" [class.bg-warning]="p.stock <= (p.stock_minimo || 0) && p.stock > 0" [class.bg-secondary]="p.stock === 0">
+                  <span class="badge rounded-pill" [class.bg-success]="p.stock > (getStats(p.id).stock_minimo_sugerido || 0)" [class.bg-warning]="p.stock <= (getStats(p.id).stock_minimo_sugerido || 0) && p.stock > 0" [class.bg-secondary]="p.stock === 0">
                     {{ p.stock }}
                   </span>
                 </td>
-                <td>{{ p.stock_minimo || 0 }}</td>
+                <td>{{ getStats(p.id).stock_minimo_sugerido || '&mdash;' }}</td>
                 <td>${{ formatMoney(p.precio) }}</td>
               </tr>
             </tbody>

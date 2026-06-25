@@ -9,6 +9,7 @@ const obtenerProductos = async () => {
         FROM productos p
         INNER JOIN categorias c
             ON p.categoria_id = c.id
+        WHERE p.estado = true
         ORDER BY p.id ASC
     `);
 

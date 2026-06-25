@@ -2,208 +2,70 @@
 
   <div class="contenedor-productos">
 
-    <!-- Tabs -->
-    <ul class="nav nav-tabs nav-tabs-productos mb-4">
-      <li class="nav-item">
-        <a class="nav-link" [class.active]="tabActivo === 'productos'" (click)="cambiarTab('productos')" href="javascript:void(0)">
-          Productos
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [class.active]="tabActivo === 'categorias'" (click)="cambiarTab('categorias')" href="javascript:void(0)">
-          Categorías
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [class.active]="tabActivo === 'inventario'" (click)="cambiarTab('inventario')" href="javascript:void(0)">
-          Inventario
-        </a>
-      </li>
-    </ul>
-
-    <!-- ═══════ TAB PRODUCTOS ═══════ -->
-    <div *ngIf="tabActivo === 'productos'">
-
-      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-        <div class="input-group input-buscar">
-          <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-          <input type="text" class="form-control" placeholder="Buscar producto o categoría..." [(ngModel)]="busqueda" />
-        </div>
-        <button class="btn btn-header flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalProducto" (click)="abrirModalProducto()">
-          + Nuevo Producto
-        </button>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+      <div class="input-group input-buscar">
+        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+        <input type="text" class="form-control" placeholder="Buscar producto o categoría..." [(ngModel)]="busqueda" />
       </div>
+      <button class="btn btn-header flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalProducto" (click)="abrirModalProducto()">
+        + Nuevo Producto
+      </button>
+    </div>
 
-      <div *ngIf="productos.length === 0" class="alert alert-info text-center">No hay productos registrados</div>
+    <div *ngIf="productos.length === 0" class="alert alert-info text-center">No hay productos registrados</div>
 
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
-        <div class="col" *ngFor="let p of productosFiltrados">
-          <div class="card producto-card h-100">
-            <div class="card-body d-flex flex-column">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
+      <div class="col" *ngFor="let p of productosPaginados">
+        <div class="card producto-card h-100">
+          <div class="card-body d-flex flex-column">
 
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h6 class="producto-nombre mb-0">{{ p.nombre }}</h6>
-                <div class="dropdown">
-                  <button class="btn btn-dots" type="button" data-bs-toggle="dropdown">&#x22EE;</button>
-                  <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" (click)="abrirModalProducto(p)" data-bs-toggle="modal" data-bs-target="#modalProducto">Editar</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" (click)="confirmarEliminarProducto(p)">Eliminar</a></li>
-                  </ul>
-                </div>
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h6 class="producto-nombre mb-0">{{ p.nombre }}</h6>
+              <div class="dropdown">
+                <button class="btn btn-dots" type="button" data-bs-toggle="dropdown">&#x22EE;</button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><a class="dropdown-item" (click)="abrirModalProducto(p)" data-bs-toggle="modal" data-bs-target="#modalProducto">Editar</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item text-danger" (click)="confirmarEliminarProducto(p)">Eliminar</a></li>
+                </ul>
               </div>
-
-              <img *ngIf="p.imagen" [src]="p.imagen" alt="{{ p.nombre }}" class="producto-imagen w-100 rounded mb-2">
-
-              <p class="text-muted small mb-1">{{ p.categoria || getNombreCategoria(p.categoria_id) }}</p>
-              <p class="producto-precio mb-1">${{ p.precio }}</p>
-
-              <div class="d-flex align-items-center gap-2 mt-auto">
-                <span class="badge rounded-pill" [class.bg-success]="p.stock > p.stock_minimo" [class.bg-warning]="stockBajo(p)" [class.bg-secondary]="p.stock === 0">
-                  Stock: {{ p.stock }}
-                </span>
-                <span *ngIf="stockBajo(p) && p.stock > 0" class="badge rounded-pill bg-warning text-dark">Stock bajo</span>
-                <span *ngIf="p.stock === 0" class="badge rounded-pill bg-danger">Agotado</span>
-              </div>
-
             </div>
-          </div>
-        </div>
-      </div>
 
-    </div>
+            <img *ngIf="p.imagen" [src]="p.imagen" alt="{{ p.nombre }}" class="producto-imagen w-100 rounded mb-2" title="{{ p.descripcion || p.nombre }}">
 
-    <!-- ═══════ TAB CATEGORÍAS ═══════ -->
-    <div *ngIf="tabActivo === 'categorias'">
+            <p class="text-muted small mb-1">{{ p.categoria || getNombreCategoria(p.categoria_id) }}</p>
+            <p class="producto-precio mb-1">${{ p.precio }}</p>
 
-      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-        <span class="fw-semibold text-muted">Total: {{ categorias.length }} categorías</span>
-        <button class="btn btn-header flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalCategoria" (click)="abrirModalCategoria()">
-          + Nueva Categoría
-        </button>
-      </div>
-
-      <div *ngIf="categorias.length === 0" class="alert alert-info text-center">No hay categorías registradas</div>
-
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
-        <div class="col" *ngFor="let c of categorias">
-          <div class="card categoria-card h-100">
-            <div class="card-body d-flex flex-column">
-
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h6 class="mb-0">{{ c.nombre }}</h6>
-                <div class="dropdown">
-                  <button class="btn btn-dots" type="button" data-bs-toggle="dropdown">&#x22EE;</button>
-                  <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" (click)="abrirModalCategoria(c)" data-bs-toggle="modal" data-bs-target="#modalCategoria">Editar</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" (click)="confirmarEliminarCategoria(c)">Eliminar</a></li>
-                  </ul>
-                </div>
-              </div>
-
-              <p class="text-muted small mb-0">{{ c.descripcion || 'Sin descripción' }}</p>
-
+            <div class="d-flex align-items-center gap-2 mt-auto">
+              <span class="badge rounded-pill"
+                [class.bg-success]="!stockBajo(p) && p.stock > 0"
+                [class.bg-warning]="stockBajo(p)"
+                [class.bg-secondary]="p.stock === 0">
+                Stock: {{ p.stock }}
+              </span>
+              <span *ngIf="stockBajo(p) && p.stock > 0" class="badge rounded-pill bg-warning text-dark">Stock bajo</span>
+              <span *ngIf="p.stock === 0" class="badge rounded-pill bg-danger">Agotado</span>
             </div>
+
           </div>
         </div>
       </div>
-
     </div>
 
-    <!-- ═══════ TAB INVENTARIO ═══════ -->
-    <div *ngIf="tabActivo === 'inventario'">
-
-      <!-- Product Stock Table -->
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2 py-3">
-          <span class="fw-semibold fs-6">Existencias</span>
-          <div class="d-flex gap-2">
-            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalMovimiento" (click)="abrirModalMovimiento('ENTRADA')">
-              <i class="bi bi-plus-circle me-1"></i>Registrar Entrada
-            </button>
-            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalMovimiento" (click)="abrirModalMovimiento('SALIDA')">
-              <i class="bi bi-dash-circle me-1"></i>Registrar Salida
-            </button>
-          </div>
-        </div>
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th>Código</th>
-                  <th>Producto</th>
-                  <th>Stock Actual</th>
-                  <th>Stock Mínimo</th>
-                  <th>Precio Venta</th>
-                  <th>Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let p of productos">
-                  <td class="text-muted">{{ p.id }}</td>
-                  <td>{{ p.nombre }}</td>
-                  <td>
-                    <span class="badge rounded-pill" [class.bg-success]="p.stock > p.stock_minimo" [class.bg-warning]="stockBajo(p) && p.stock > 0" [class.bg-secondary]="p.stock === 0">
-                      {{ p.stock }}
-                    </span>
-                  </td>
-                  <td>{{ p.stock_minimo }}</td>
-                  <td>${{ p.precio }}</td>
-                  <td>
-                    <span class="badge rounded-pill" [class.bg-success]="p.stock > p.stock_minimo" [class.bg-warning]="stockBajo(p) && p.stock > 0" [class.bg-danger]="p.stock === 0">
-                      <ng-container [ngSwitch]="true">
-                        <span *ngSwitchCase="p.stock === 0">Agotado</span>
-                        <span *ngSwitchCase="stockBajo(p)">Stock bajo</span>
-                        <span *ngSwitchDefault>Disponible</span>
-                      </ng-container>
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Movements History -->
-      <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3">
-          <span class="fw-semibold fs-6">Historial de movimientos</span>
-        </div>
-        <div class="card-body p-0">
-          <div *ngIf="movimientos.length === 0" class="alert alert-info text-center m-3">No hay movimientos registrados</div>
-          <div class="table-responsive" *ngIf="movimientos.length > 0">
-            <table class="table table-hover align-middle mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th>Fecha</th>
-                  <th>Producto</th>
-                  <th>Tipo</th>
-                  <th>Cantidad</th>
-                  <th>Observación</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let m of movimientos">
-                  <td class="text-nowrap">{{ m.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
-                  <td>{{ m.producto }}</td>
-                  <td>
-                    <span class="badge rounded-pill" [class.bg-success]="m.tipo_movimiento === 'ENTRADA'" [class.bg-danger]="m.tipo_movimiento === 'SALIDA'">
-                      {{ m.tipo_movimiento }}
-                    </span>
-                  </td>
-                  <td>{{ m.cantidad }}</td>
-                  <td class="text-muted small">{{ m.observacion || '—' }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <!-- Paginación -->
+    <nav *ngIf="totalPaginas > 1" class="mt-3">
+      <ul class="pagination pagination-sm justify-content-center mb-0">
+        <li class="page-item" [class.disabled]="paginaActual === 1">
+          <a class="page-link" (click)="cambiarPagina(paginaActual - 1)" href="javascript:void(0)">&laquo;</a>
+        </li>
+        <li class="page-item" *ngFor="let n of [].constructor(totalPaginas); let i = index" [class.active]="paginaActual === i + 1">
+          <a class="page-link" (click)="cambiarPagina(i + 1)" href="javascript:void(0)">{{ i + 1 }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+          <a class="page-link" (click)="cambiarPagina(paginaActual + 1)" href="javascript:void(0)">&raquo;</a>
+        </li>
+      </ul>
+    </nav>
 
   </div>
 
@@ -244,7 +106,10 @@
           </div>
           <div class="col-sm-6">
             <label class="form-label">Stock mínimo</label>
-            <input type="number" class="form-control" [(ngModel)]="formProducto.stock_minimo" name="prodStockMin" placeholder="0" />
+            <input type="number" class="form-control" [(ngModel)]="formProducto.stock_minimo" min="0" />
+          </div>
+          <div class="col-12 text-center" *ngIf="formProducto.imagen">
+            <img [src]="formProducto.imagen" alt="Vista previa" class="img-preview-modal rounded border mb-2" (error)="formProducto.imagen = ''">
           </div>
           <div class="col-12">
             <label class="form-label">URL de imagen</label>
@@ -255,69 +120,6 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" id="btnCerrarModalProducto">Cancelar</button>
         <button type="button" class="btn btn-guardar" (click)="guardarProducto()">{{ editandoProducto ? 'Guardar Cambios' : 'Crear Producto' }}</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════ MODAL CATEGORÍA ═══════ -->
-<div class="modal fade" id="modalCategoria" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">{{ editandoCategoria ? 'Editar Categoría' : 'Nueva Categoría' }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row g-3">
-          <div class="col-12">
-            <label class="form-label">Nombre <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" [(ngModel)]="formCategoria.nombre" name="catNombre" required placeholder="Nombre de la categoría" />
-          </div>
-          <div class="col-12">
-            <label class="form-label">Descripción</label>
-            <textarea class="form-control" [(ngModel)]="formCategoria.descripcion" name="catDesc" rows="2" placeholder="Descripción"></textarea>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" id="btnCerrarModalCategoria">Cancelar</button>
-        <button type="button" class="btn btn-guardar" (click)="guardarCategoria()">{{ editandoCategoria ? 'Guardar Cambios' : 'Crear Categoría' }}</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════ MODAL MOVIMIENTO ═══════ -->
-<div class="modal fade" id="modalMovimiento" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Registrar {{ tipoMovimientoActual }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row g-3">
-          <div class="col-12">
-            <label class="form-label">Producto <span class="text-danger">*</span></label>
-            <select class="form-select" [(ngModel)]="formMovimiento.producto_id" name="movProd" required>
-              <option [ngValue]="''" disabled>Seleccionar producto</option>
-              <option *ngFor="let p of productos" [ngValue]="p.id">{{ p.nombre }} (Stock: {{ p.stock }})</option>
-            </select>
-          </div>
-          <div class="col-sm-6">
-            <label class="form-label">Cantidad <span class="text-danger">*</span></label>
-            <input type="number" class="form-control" [(ngModel)]="formMovimiento.cantidad" name="movCant" required placeholder="0" min="1" />
-          </div>
-          <div class="col-12">
-            <label class="form-label">Observación</label>
-            <input type="text" class="form-control" [(ngModel)]="formMovimiento.observacion" name="movObs" placeholder="Opcional" />
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" id="btnCerrarModalMovimiento">Cancelar</button>
-        <button type="button" class="btn btn-guardar" (click)="guardarMovimiento()">Registrar</button>
       </div>
     </div>
   </div>

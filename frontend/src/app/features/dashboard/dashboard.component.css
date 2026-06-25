@@ -1,7 +1,8 @@
 .dashboard-container {
   padding: 20px;
   background: #f5f5f5;
-  min-height: 100vh;
+  height: calc(100vh - 70px - 48px);
+  overflow-y: auto;
 }
 
 /* Cards superiores */
@@ -119,7 +120,8 @@
 
 .bar span {
   position: absolute;
-  bottom: -40px;
+  bottom: auto;
+  top: 105%;
   left: 50%;
   transform: translateX(-50%);
   font-size: 11px;
@@ -157,6 +159,8 @@
 .stock-item strong {
   color: #8b5cf6;
 }
+
+/* Alertas */
 
 /* Responsive */
 

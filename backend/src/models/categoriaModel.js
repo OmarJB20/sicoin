@@ -6,6 +6,7 @@ const obtenerCategorias = async () => {
         `
         SELECT *
         FROM categorias
+        WHERE estado IS DISTINCT FROM false
         ORDER BY id ASC
         `
     );

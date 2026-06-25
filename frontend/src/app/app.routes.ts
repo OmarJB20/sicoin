@@ -4,6 +4,8 @@ import { LoginComponent } from './features/auth/login/login.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { UsuariosComponent } from './features/usuarios/usuarios.component';
 import { ProductosComponent } from './features/productos/productos.component';
+import { CategoriasComponent } from './features/categorias/categorias.component';
+import { InventarioComponent } from './features/inventario/inventario.component';
 import { VentasComponent } from './features/ventas/ventas.component';
 import { ReportesComponent } from './features/reportes/reportes.component';
 import { PerfilComponent } from './features/perfil/perfil.component';
@@ -44,9 +46,13 @@ export const routes: Routes = [
       // Productos - Gestión (Admin)
       {
         path: 'productos',
-        component: ProductosComponent,
         canActivate: [roleGuard],
-        data: { roles: [1] }
+        data: { roles: [1] },
+        children: [
+          { path: '', component: ProductosComponent },
+          { path: 'categorias', component: CategoriasComponent },
+          { path: 'inventario', component: InventarioComponent }
+        ]
       },
 
       // Control de Ventas (Admin)
@@ -60,9 +66,16 @@ export const routes: Routes = [
       // Reportes (Admin)
       {
         path: 'reportes',
-        component: ReportesComponent,
         canActivate: [roleGuard],
-        data: { roles: [1] }
+        data: { roles: [1] },
+        children: [
+          { path: '', redirectTo: 'inventario', pathMatch: 'full' },
+          { path: 'inventario', component: ReportesComponent },
+          { path: 'ventas', component: ReportesComponent },
+          { path: 'clientes', component: ReportesComponent },
+          { path: 'mas-vendidos', component: ReportesComponent },
+          { path: 'movimientos', component: ReportesComponent }
+        ]
       },
 
       // Perfil
