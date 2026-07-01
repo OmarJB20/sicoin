@@ -14,6 +14,7 @@ const rolRoutes = require('./routes/rolRoutes');
 const reporteRoutes = require('./routes/reporteRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const estadisticaRoutes = require('./routes/estadisticaRoutes');
+const autorizacionRoutes = require('./routes/autorizacionRoutes');
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/api/roles', rolRoutes);
 app.use('/api/reportes', reporteRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/estadisticas', verificarToken, estadisticaRoutes);
+app.use('/api/autorizaciones', verificarToken, autorizacionRoutes);
 
 // Ruta principal
 app.get('/', (req, res) => {

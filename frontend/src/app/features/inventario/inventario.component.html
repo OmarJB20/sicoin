@@ -7,12 +7,40 @@
       <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2 py-3">
         <span class="fw-semibold fs-6">Existencias</span>
         <div class="d-flex gap-2">
-          <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalMovimiento" (click)="abrirModalMovimiento('ENTRADA')">
-            <i class="bi bi-plus-circle me-1"></i>Registrar Entrada
-          </button>
-          <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalMovimiento" (click)="abrirModalMovimiento('SALIDA')">
-            <i class="bi bi-dash-circle me-1"></i>Registrar Salida
-          </button>
+
+          <!-- Admin: botones de movimiento -->
+          <ng-container *ngIf="rolId === 1">
+            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalMovimiento" (click)="abrirModalMovimiento('ENTRADA')">
+              <i class="bi bi-plus-circle me-1"></i>Registrar Entrada
+            </button>
+            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalMovimiento" (click)="abrirModalMovimiento('SALIDA')">
+              <i class="bi bi-dash-circle me-1"></i>Registrar Salida
+            </button>
+            <button class="btn btn-warning btn-sm" (click)="abrirModalSolicitud()">
+              <i class="bi bi-file-earmark-text me-1"></i>Solicitar Salida
+            </button>
+          </ng-container>
+
+          <!-- Bodeguero: generar reporte -->
+          <div class="btn-group" *ngIf="rolId === 2">
+            <button class="btn btn-guardar btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-file-earmark-text me-1"></i>Generar Reporte
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <a class="dropdown-item" href (click)="$event.preventDefault(); generarPDF()">
+                  <i class="bi bi-file-pdf me-2"></i>Exportar PDF
+                  <span class="spinner-border spinner-border-sm ms-2" *ngIf="cargandoPDF" role="status"></span>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href (click)="$event.preventDefault(); imprimir()">
+                  <i class="bi bi-printer me-2"></i>Imprimir
+                </a>
+              </li>
+            </ul>
+          </div>
+
         </div>
       </div>
       <div class="card-body p-0">
@@ -73,10 +101,18 @@
     </div>
 
     <!-- Movements History -->
-    <div class="card border-0 shadow-sm">
-      <div class="card-header bg-white py-3">
-        <span class="fw-semibold fs-6">Historial de movimientos</span>
+    <div id="reporte-contenido">
+
+      <div class="report-header" style="display:none; text-align:center; margin-bottom:20px;">
+        <h4>SICOIN - Control de Inventario</h4>
+        <p style="font-size:12px; color:#666;">Historial de movimientos</p>
+        <hr>
       </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+          <span class="fw-semibold fs-6">Historial de movimientos</span>
+        </div>
       <div class="card-body p-0">
         <div *ngIf="movimientos.length === 0" class="alert alert-info text-center m-3">No hay movimientos registrados</div>
         <div class="table-responsive" *ngIf="movimientos.length > 0">
@@ -112,6 +148,8 @@
 
 </div>
 
+</div>
+
 <!-- ═══════ MODAL MOVIMIENTO ═══════ -->
 <div class="modal fade" id="modalMovimiento" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -142,6 +180,41 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" id="btnCerrarModalMovimiento">Cancelar</button>
         <button type="button" class="btn btn-guardar" (click)="guardarMovimiento()">Registrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODAL SOLICITAR SALIDA ═══════ -->
+<div class="modal fade" [class.show]="showSolicitudModal" [style.display]="showSolicitudModal ? 'block' : 'none'" tabindex="-1" *ngIf="showSolicitudModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Solicitar Salida</h5>
+        <button type="button" class="btn-close" (click)="cerrarModalSolicitud()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Producto <span class="text-danger">*</span></label>
+            <select class="form-select" [(ngModel)]="formSolicitud.producto_id" name="solProd" required>
+              <option [ngValue]="''" disabled>Seleccionar producto</option>
+              <option *ngFor="let p of productos" [ngValue]="p.id">{{ p.nombre }} (Stock: {{ p.stock }})</option>
+            </select>
+          </div>
+          <div class="col-sm-6">
+            <label class="form-label">Cantidad <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" [(ngModel)]="formSolicitud.cantidad" name="solCant" required placeholder="0" min="1" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">Observación</label>
+            <input type="text" class="form-control" [(ngModel)]="formSolicitud.observacion" name="solObs" placeholder="Opcional" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="cerrarModalSolicitud()">Cancelar</button>
+        <button type="button" class="btn btn-guardar" (click)="crearSolicitud()">Crear Solicitud</button>
       </div>
     </div>
   </div>

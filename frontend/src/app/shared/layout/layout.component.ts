@@ -21,6 +21,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   subNavReportesOpen = false;
   alertas: any[] = [];
   showNotificaciones = false;
+  rolId: number | null = null;
   private routeSubscription?: Subscription;
   private alertaSubscription?: Subscription;
 
@@ -36,7 +37,9 @@ export class LayoutComponent implements OnInit, OnDestroy {
     '/reportes/clientes': 'REPORTE - CLIENTES',
     '/reportes/mas-vendidos': 'REPORTE - MÁS VENDIDOS',
     '/reportes/movimientos': 'REPORTE - MOVIMIENTOS',
-    '/perfil': 'PERFIL'
+    '/perfil': 'PERFIL',
+    '/inventario': 'CONTROL DE INVENTARIO',
+    '/autorizaciones': 'AUTORIZACIÓN DE REGISTROS'
   };
 
   constructor(
@@ -46,6 +49,9 @@ export class LayoutComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    const user: any = this.authService.getUser();
+    this.rolId = user?.rol_id ?? null;
+
     this.subNavOpen = this.router.url.startsWith('/productos');
     this.subNavReportesOpen = this.router.url.startsWith('/reportes');
 

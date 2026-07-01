@@ -24,13 +24,13 @@
           </a>
         </li>
 
-        <li class="nav-item" routerLinkActive="active">
+        <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 1">
           <a class="nav-link text-white" routerLink="/usuarios">
             Usuarios
           </a>
         </li>
 
-        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:false}">
+        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:false}" *ngIf="rolId === 1">
           <div class="d-flex align-items-center">
             <a class="nav-link text-white flex-grow-1" routerLink="/productos">
               Productos
@@ -49,13 +49,13 @@
           </div>
         </li>
 
-        <li class="nav-item" routerLinkActive="active">
+        <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 1">
           <a class="nav-link text-white" routerLink="/ventas">
             Ventas
           </a>
         </li>
 
-        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:false}">
+        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:false}" *ngIf="rolId === 1">
           <div class="d-flex align-items-center">
             <a class="nav-link text-white flex-grow-1" routerLink="/reportes">
               Reportes
@@ -81,6 +81,19 @@
               <i class="bi bi-dot me-1"></i>Movimientos
             </a>
           </div>
+        </li>
+
+        <!-- BODEGUERO -->
+        <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 2">
+          <a class="nav-link text-white" routerLink="/inventario">
+            <i class="bi bi-box-seam me-2"></i>Control de Inventario
+          </a>
+        </li>
+
+        <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 2">
+          <a class="nav-link text-white" routerLink="/autorizaciones">
+            <i class="bi bi-check2-square me-2"></i>Autorización de Registros
+          </a>
         </li>
 
         <li class="nav-item" routerLinkActive="active">
@@ -162,7 +175,7 @@
         </div>
 
         <div class="usuario-info">
-          <small>Administrador</small>
+          <small>{{ rolId === 1 ? 'Administrador' : 'Bodeguero' }}</small>
         </div>
       </div>
 

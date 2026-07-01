@@ -9,6 +9,7 @@ import { InventarioComponent } from './features/inventario/inventario.component'
 import { VentasComponent } from './features/ventas/ventas.component';
 import { ReportesComponent } from './features/reportes/reportes.component';
 import { PerfilComponent } from './features/perfil/perfil.component';
+import { AutorizacionComponent } from './features/autorizacion/autorizacion.component';
 
 import { LayoutComponent } from './shared/layout/layout.component';
 
@@ -82,6 +83,20 @@ export const routes: Routes = [
       {
         path: 'perfil',
         component: PerfilComponent
+      },
+
+      // Bodeguero
+      {
+        path: 'inventario',
+        component: InventarioComponent,
+        canActivate: [roleGuard],
+        data: { roles: [2] }
+      },
+      {
+        path: 'autorizaciones',
+        component: AutorizacionComponent,
+        canActivate: [roleGuard],
+        data: { roles: [2] }
       }
 
     ]

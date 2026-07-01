@@ -1,0 +1,96 @@
+<div class="inventario-container">
+  <div class="contenedor-autorizacion">
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2 py-3">
+        <span class="fw-semibold fs-6">Autorización de Salidas</span>
+      </div>
+      <div class="card-body p-0">
+        <div *ngIf="autorizaciones.length === 0" class="alert alert-info text-center m-3">
+          No hay autorizaciones pendientes
+        </div>
+        <div class="table-responsive" *ngIf="autorizaciones.length > 0">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Observación</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let a of autorizaciones">
+                <td>{{ a.producto }}</td>
+                <td>{{ a.cantidad }}</td>
+                <td class="text-muted small">{{ a.observacion || '—' }}</td>
+                <td>
+                  <span class="badge rounded-pill"
+                    [class.bg-warning]="a.estado === 'PENDIENTE'"
+                    [class.text-dark]="a.estado === 'PENDIENTE'"
+                    [class.bg-success]="a.estado === 'AUTORIZADO'"
+                    [class.bg-danger]="a.estado === 'CANCELADO'">
+                    {{ a.estado }}
+                  </span>
+                </td>
+                <td class="text-nowrap">{{ a.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                  <div class="d-flex gap-1 flex-wrap">
+
+                    <!-- Dropdown Autorizar / Cancelar -->
+                    <div class="btn-group" *ngIf="a.estado !== 'CANCELADO'">
+                      <button
+                        class="btn btn-success btn-sm"
+                        (click)="cambiarEstado(a, 'AUTORIZADO')"
+                        [disabled]="a.estado === 'AUTORIZADO'"
+                        title="Autorizar"
+                      >
+                        <i class="bi bi-check-lg"></i> Autorizar
+                      </button>
+                      <button
+                        class="btn btn-success btn-sm dropdown-toggle dropdown-toggle-split"
+                        data-bs-toggle="dropdown"
+                        [disabled]="a.estado === 'AUTORIZADO'"
+                        aria-expanded="false"
+                      ></button>
+                      <ul class="dropdown-menu">
+                        <li>
+                          <a class="dropdown-item" href (click)="$event.preventDefault(); cambiarEstado(a, 'CANCELADO')">
+                            <i class="bi bi-x-lg me-2"></i>Cancelar
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <!-- Si ya está cancelado, botón para reactivar -->
+                    <button
+                      class="btn btn-warning btn-sm text-dark"
+                      *ngIf="a.estado === 'CANCELADO'"
+                      (click)="cambiarEstado(a, 'PENDIENTE')"
+                      title="Reactivar"
+                    >
+                      <i class="bi bi-arrow-counterclockwise"></i> Reactivar
+                    </button>
+
+                    <!-- Eliminar -->
+                    <button
+                      class="btn btn-outline-danger btn-sm"
+                      (click)="eliminar(a.id)"
+                      title="Eliminar"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
