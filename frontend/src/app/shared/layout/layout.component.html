@@ -20,20 +20,20 @@
 
         <li class="nav-item" routerLinkActive="active">
           <a class="nav-link text-white" routerLink="/dashboard">
-            Dashboard
+            <i class="bi bi-speedometer2 me-2"></i>Dashboard
           </a>
         </li>
 
         <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 1">
           <a class="nav-link text-white" routerLink="/usuarios">
-            Usuarios
+            <i class="bi bi-people-fill me-2"></i>Usuarios
           </a>
         </li>
 
         <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:false}" *ngIf="rolId === 1">
           <div class="d-flex align-items-center">
             <a class="nav-link text-white flex-grow-1" routerLink="/productos">
-              Productos
+              <i class="bi bi-box-seam me-2"></i>Productos
             </a>
             <button class="btn btn-sm text-white border-0 me-1" (click)="toggleSubNav($event)">
               <i class="bi" [class.bi-chevron-down]="!subNavOpen" [class.bi-chevron-up]="subNavOpen"></i>
@@ -41,24 +41,24 @@
           </div>
           <div class="sub-nav mt-1" *ngIf="subNavOpen">
             <a class="nav-link text-white py-1 small ps-4 sub-link" routerLink="/productos/categorias" routerLinkActive="active">
-              <i class="bi bi-dot me-1"></i>Categorías
+              <i class="bi bi-tags-fill me-1"></i>Categorías
             </a>
             <a class="nav-link text-white py-1 small ps-4 sub-link" routerLink="/productos/inventario" routerLinkActive="active">
-              <i class="bi bi-dot me-1"></i>Inventario
+              <i class="bi bi-clipboard-data-fill me-1"></i>Inventario
             </a>
           </div>
         </li>
 
         <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 1">
           <a class="nav-link text-white" routerLink="/ventas">
-            Ventas
+            <i class="bi bi-cart-fill me-2"></i>Ventas
           </a>
         </li>
 
         <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:false}" *ngIf="rolId === 1">
           <div class="d-flex align-items-center">
             <a class="nav-link text-white flex-grow-1" routerLink="/reportes">
-              Reportes
+              <i class="bi bi-file-earmark-bar-graph-fill me-2"></i>Reportes
             </a>
             <button class="btn btn-sm text-white border-0 me-1" (click)="toggleSubNavReportes($event)">
               <i class="bi" [class.bi-chevron-down]="!subNavReportesOpen" [class.bi-chevron-up]="subNavReportesOpen"></i>
@@ -66,19 +66,19 @@
           </div>
           <div class="sub-nav mt-1" *ngIf="subNavReportesOpen">
             <a class="nav-link text-white py-1 small ps-4 sub-link" routerLink="/reportes/inventario" routerLinkActive="active">
-              <i class="bi bi-dot me-1"></i>Inventario
+              <i class="bi bi-box me-1"></i>Inventario
             </a>
             <a class="nav-link text-white py-1 small ps-4 sub-link" routerLink="/reportes/ventas" routerLinkActive="active">
-              <i class="bi bi-dot me-1"></i>Ventas
+              <i class="bi bi-cart-check me-1"></i>Ventas
             </a>
             <a class="nav-link text-white py-1 small ps-4 sub-link" routerLink="/reportes/clientes" routerLinkActive="active">
-              <i class="bi bi-dot me-1"></i>Clientes
+              <i class="bi bi-person-badge me-1"></i>Clientes
             </a>
             <a class="nav-link text-white py-1 small ps-4 sub-link" routerLink="/reportes/mas-vendidos" routerLinkActive="active">
-              <i class="bi bi-dot me-1"></i>Más Vendidos
+              <i class="bi bi-trophy-fill me-1"></i>Más Vendidos
             </a>
             <a class="nav-link text-white py-1 small ps-4 sub-link" routerLink="/reportes/movimientos" routerLinkActive="active">
-              <i class="bi bi-dot me-1"></i>Movimientos
+              <i class="bi bi-arrow-left-right me-1"></i>Movimientos
             </a>
           </div>
         </li>
@@ -98,7 +98,7 @@
 
         <li class="nav-item" routerLinkActive="active">
           <a class="nav-link text-white" routerLink="/perfil">
-            Perfil
+            <i class="bi bi-person-circle me-2"></i>Perfil
           </a>
         </li>
 

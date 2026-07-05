@@ -1,4 +1,4 @@
-<div class="perfil-container">
+<div class="perfil-container" [class.bodeguero]="rolId === 2">
 
   <div *ngIf="cargando" class="text-center py-5">
     <div class="spinner-border text-primary" role="status"></div>

@@ -20,6 +20,7 @@ export class PerfilComponent implements OnInit {
   fotoPreview = '';
   archivoSeleccionado: File | null = null;
   cargando = true;
+  rolId: number | null = null;
 
   constructor(
     private authService: AuthService,
@@ -28,6 +29,7 @@ export class PerfilComponent implements OnInit {
 
   ngOnInit() {
     const tokenData: any = this.authService.getUser();
+    this.rolId = tokenData?.rol_id ?? null;
     if (tokenData?.id) {
       this.usuarioService.obtener(tokenData.id).subscribe({
         next: (res: any) => {

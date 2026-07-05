@@ -4,37 +4,10 @@
 
 .contenedor-ventas {
   background: #fff;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   padding: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-  border: 1px solid #eaeaea;
-}
-
-/* Botones */
-.btn-header {
-  background-color: #0f7c75;
-  color: #fff;
-  border: none;
-}
-
-.btn-header:hover {
-  background-color: #0d6e67;
-  color: #fff;
-}
-
-.btn-guardar {
-  background-color: #0d6e67;
-  color: #fff;
-  border: none;
-}
-
-.btn-guardar:hover {
-  background-color: #0a5c56;
-  color: #fff;
-}
-
-.btn-guardar:disabled {
-  background-color: #6c757d;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--card-border);
 }
 
 /* Buscador */
@@ -44,38 +17,23 @@
 
 .input-buscar .input-group-text {
   border-right: none;
+  background: #fff;
+  color: var(--text-muted);
 }
 
 .input-buscar .form-control {
   border-left: none;
 }
 
-/* Tabla */
-.table th {
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.table td {
-  font-size: 13px;
-}
-
-/* Modal Header */
-.modal-header {
-  background-color: #0f7c75;
-  color: white;
-}
-
-.modal-header .btn-close {
-  filter: brightness(0) invert(1);
+.input-buscar .form-control:focus {
+  border-left: none;
 }
 
 /* Badges */
 .badge {
   font-size: 11px;
   font-weight: 500;
-  padding: 4px 10px;
+  padding: 4px 14px;
 }
 
 /* Responsive */
@@ -86,10 +44,5 @@
 
   .input-buscar {
     max-width: 100%;
-  }
-
-  .table th,
-  .table td {
-    font-size: 12px;
   }
 }

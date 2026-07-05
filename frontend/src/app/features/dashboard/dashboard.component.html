@@ -1,11 +1,12 @@
 <div class="dashboard-container">
 
-  <!-- Cards superiores -->
+  <!-- Stats Cards -->
   <div class="stats-grid">
 
     <div class="stat-card">
       <div class="card-header">
         <span>Total Ventas</span>
+        <div class="stat-icon ventas"><i class="bi bi-currency-dollar"></i></div>
       </div>
       <h3>${{ resumen.totalVentas }}</h3>
     </div>
@@ -13,6 +14,7 @@
     <div class="stat-card">
       <div class="card-header">
         <span>Stock</span>
+        <div class="stat-icon stock"><i class="bi bi-boxes"></i></div>
       </div>
       <h3>{{ resumen.totalStock }}</h3>
     </div>
@@ -20,6 +22,7 @@
     <div class="stat-card">
       <div class="card-header">
         <span>Productos</span>
+        <div class="stat-icon productos"><i class="bi bi-box-seam"></i></div>
       </div>
       <h3>{{ resumen.totalProductos }}</h3>
     </div>
@@ -27,6 +30,7 @@
     <div class="stat-card">
       <div class="card-header">
         <span>Reportes</span>
+        <div class="stat-icon reportes"><i class="bi bi-file-text"></i></div>
       </div>
       <h3>{{ resumen.totalReportes }}</h3>
     </div>
@@ -42,8 +46,10 @@
       <h2>Ventas semanales</h2>
 
       <div class="chart">
-        <div class="bar" *ngFor="let v of ventasSemanales" [style.height.%]="(v.total / maxVentaSemanal) * 100">
-          <span>{{ v.nombre }}</span>
+        <div class="bar-wrapper" *ngFor="let v of ventasSemanales">
+          <div class="bar" [style.height.%]="(v.total / maxVentaSemanal) * 100">
+            <span>{{ v.nombre }}</span>
+          </div>
         </div>
       </div>
 
@@ -55,8 +61,10 @@
       <h2>Ventas por Categoría</h2>
 
       <div class="chart">
-        <div class="bar secondary" *ngFor="let c of ventasPorCategoria" [style.height.%]="(c.total / maxVentaCategoria) * 100">
-          <span>{{ c.categoria }} ({{ c.porcentaje }}%)</span>
+        <div class="bar-wrapper" *ngFor="let c of ventasPorCategoria">
+          <div class="bar secondary" [style.height.%]="(c.total / maxVentaCategoria) * 100">
+            <span>{{ c.categoria }} ({{ c.porcentaje }}%)</span>
+          </div>
         </div>
       </div>
 

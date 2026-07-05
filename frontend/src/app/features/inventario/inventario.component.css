@@ -4,46 +4,42 @@
 
 .contenedor-inventario {
   background: #fff;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   padding: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-  border: 1px solid #eaeaea;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--card-border);
 }
 
 .btn-guardar {
-  background-color: #0d6e67;
+  background-color: var(--primary-dark);
   color: #fff;
   border: none;
 }
 
 .btn-guardar:hover {
-  background-color: #0a5c56;
+  background-color: #08443f;
   color: #fff;
 }
 
 .badge {
   font-size: 11px;
   font-weight: 500;
-  padding: 4px 10px;
+  padding: 4px 14px;
 }
 
-.modal-header {
-  background-color: #0f7c75;
-  color: white;
+.card {
+  border: 1px solid var(--card-border);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
 }
 
-.modal-header .btn-close {
-  filter: brightness(0) invert(1);
+.card-header.bg-white {
+  border-bottom: 1px solid var(--border-color);
+  border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
 }
 
-.table th {
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.table td {
-  font-size: 13px;
+.card-body {
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
 @media (max-width: 575.98px) {

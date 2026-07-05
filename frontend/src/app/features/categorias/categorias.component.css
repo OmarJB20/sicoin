@@ -4,68 +4,38 @@
 
 .contenedor-categorias {
   background: #fff;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   padding: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-  border: 1px solid #eaeaea;
-}
-
-.btn-header {
-  background-color: #0f7c75;
-  color: #fff;
-  border: none;
-}
-
-.btn-header:hover {
-  background-color: #0d6e67;
-  color: #fff;
-}
-
-.btn-guardar {
-  background-color: #0d6e67;
-  color: #fff;
-  border: none;
-}
-
-.btn-guardar:hover {
-  background-color: #0a5c56;
-  color: #fff;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--card-border);
 }
 
 .categoria-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  transition: box-shadow 0.2s ease;
+  border: 1px solid var(--card-border);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
 }
 
 .categoria-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--card-shadow-hover);
 }
 
 .btn-dots {
   background: none;
   border: none;
-  font-size: 22px;
+  font-size: 20px;
   line-height: 1;
-  padding: 0 4px;
-  color: #6c757d;
+  padding: 4px 8px;
+  color: var(--text-muted);
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
+  transition: var(--transition);
 }
 
 .btn-dots:hover {
-  background-color: #f0f0f0;
-  color: #333;
-}
-
-.modal-header {
-  background-color: #0f7c75;
-  color: white;
-}
-
-.modal-header .btn-close {
-  filter: brightness(0) invert(1);
+  background: #f0f0f0;
+  color: var(--text-primary);
 }
 
 @media (max-width: 575.98px) {
