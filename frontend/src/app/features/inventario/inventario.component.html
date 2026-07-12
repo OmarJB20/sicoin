@@ -120,6 +120,7 @@
             <thead class="table-light">
               <tr>
                 <th>Fecha</th>
+                <th>Código</th>
                 <th>Producto</th>
                 <th>Tipo</th>
                 <th>Cantidad</th>
@@ -129,6 +130,7 @@
             <tbody>
               <tr *ngFor="let m of movimientos">
                 <td class="text-nowrap">{{ m.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="text-muted">{{ m.producto_id }}</td>
                 <td>{{ m.producto }}</td>
                 <td>
                   <span class="badge rounded-pill" [class.bg-success]="m.tipo_movimiento === 'ENTRADA'" [class.bg-danger]="m.tipo_movimiento === 'SALIDA'">
