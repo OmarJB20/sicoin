@@ -39,7 +39,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
     '/reportes/movimientos': 'REPORTE - MOVIMIENTOS',
     '/perfil': 'PERFIL',
     '/inventario': 'CONTROL DE INVENTARIO',
-    '/autorizaciones': 'AUTORIZACIÓN DE REGISTROS'
+    '/autorizaciones': 'AUTORIZACIÓN DE REGISTROS',
+    '/catalogo': 'CATÁLOGO'
   };
 
   constructor(

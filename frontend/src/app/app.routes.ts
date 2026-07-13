@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 
 import { LoginComponent } from './features/auth/login/login.component';
+import { RegistroClienteComponent } from './features/auth/registro-cliente/registro-cliente.component';
+import { CatalogoComponent } from './features/catalogo/catalogo.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { UsuariosComponent } from './features/usuarios/usuarios.component';
 import { ProductosComponent } from './features/productos/productos.component';
@@ -22,6 +24,12 @@ export const routes: Routes = [
   {
     path: '',
     component: LoginComponent
+  },
+
+  // Registro de cliente (público)
+  {
+    path: 'registro',
+    component: RegistroClienteComponent
   },
 
   // Área protegida
@@ -83,6 +91,14 @@ export const routes: Routes = [
       {
         path: 'perfil',
         component: PerfilComponent
+      },
+
+      // Catálogo (Cliente)
+      {
+        path: 'catalogo',
+        component: CatalogoComponent,
+        canActivate: [roleGuard],
+        data: { roles: [3] }
       },
 
       // Bodeguero

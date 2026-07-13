@@ -15,7 +15,9 @@ const crearUsuario = async (
     apellido,
     correo,
     password,
-    rol_id
+    rol_id,
+    telefono,
+    direccion
 ) => {
 
     const result = await pool.query(
@@ -26,10 +28,12 @@ const crearUsuario = async (
             apellido,
             correo,
             password,
-            rol_id
+            rol_id,
+            telefono,
+            direccion
         )
         VALUES
-        ($1,$2,$3,$4,$5)
+        ($1,$2,$3,$4,$5,$6,$7)
         RETURNING *
         `,
         [
@@ -37,7 +41,9 @@ const crearUsuario = async (
             apellido,
             correo,
             password,
-            rol_id
+            rol_id,
+            telefono || null,
+            direccion || null
         ]
     );
 

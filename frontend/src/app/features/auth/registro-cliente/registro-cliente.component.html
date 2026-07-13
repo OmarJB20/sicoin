@@ -1,0 +1,66 @@
+<div class="login-wrapper">
+  <div class="login-bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+  <div class="login-card">
+    <div class="login-card-inner">
+      <div class="login-header">
+        <div class="login-logo">
+          <i class="bi bi-person-plus"></i>
+        </div>
+        <h1 class="login-title">SICOIN</h1>
+        <p class="login-subtitle">Crear cuenta de cliente</p>
+      </div>
+      <form (ngSubmit)="registrar()">
+        <div class="row g-2 mb-3">
+          <div class="col-sm-6">
+            <label class="form-label">Nombre <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" [(ngModel)]="nombre" name="nombre" required placeholder="Nombre">
+          </div>
+          <div class="col-sm-6">
+            <label class="form-label">Apellido <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" [(ngModel)]="apellido" name="apellido" required placeholder="Apellido">
+          </div>
+        </div>
+        <div class="row g-2 mb-3">
+          <div class="col-sm-6">
+            <label class="form-label">Correo <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+              <input type="email" class="form-control" [(ngModel)]="correo" name="correo" required placeholder="correo@ejemplo.com">
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <label class="form-label">Teléfono</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+              <input type="text" class="form-control" [(ngModel)]="telefono" name="telefono" placeholder="Teléfono">
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Contraseña <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input type="password" class="form-control" [(ngModel)]="password" name="password" required placeholder="Contraseña">
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="form-label">Dirección</label>
+          <textarea class="form-control" [(ngModel)]="direccion" name="direccion" rows="2" placeholder="Dirección (opcional)"></textarea>
+        </div>
+        <button type="submit" class="btn btn-login w-100 mb-3">
+          <span>Crear cuenta</span>
+          <i class="bi bi-person-plus"></i>
+        </button>
+        <div class="text-center">
+          <small>¿Ya tienes cuenta?
+            <a routerLink="/" class="text-decoration-none fw-semibold" style="color: var(--primary-dark);">Inicia sesión</a>
+          </small>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

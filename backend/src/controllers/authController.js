@@ -123,7 +123,59 @@ const login = async (req, res) => {
     }
 };
 
+const registrarCliente = async (req, res) => {
+
+    try {
+
+        const {
+            nombre,
+            apellido,
+            correo,
+            password,
+            telefono,
+            direccion
+        } = req.body;
+
+        const existeUsuario =
+            await usuarioModel.buscarPorCorreo(correo);
+
+        if (existeUsuario) {
+            return res.status(400).json({
+                mensaje: 'El correo ya está registrado'
+            });
+        }
+
+        const passwordHash =
+            await bcrypt.hash(password, 10);
+
+        await usuarioModel.crearUsuario(
+            nombre,
+            apellido,
+            correo,
+            passwordHash,
+            3,
+            telefono,
+            direccion
+        );
+
+        res.status(201).json({
+            mensaje: 'Cliente registrado exitosamente'
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            mensaje: error.message
+        });
+
+    }
+
+};
+
 module.exports = {
     register,
+    registrarCliente,
     login
 };

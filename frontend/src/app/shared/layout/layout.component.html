@@ -96,6 +96,13 @@
           </a>
         </li>
 
+        <!-- CLIENTE -->
+        <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 3">
+          <a class="nav-link text-white" routerLink="/catalogo">
+            <i class="bi bi-shop me-2"></i>Catálogo
+          </a>
+        </li>
+
         <li class="nav-item" routerLinkActive="active">
           <a class="nav-link text-white" routerLink="/perfil">
             <i class="bi bi-person-circle me-2"></i>Perfil
@@ -145,8 +152,8 @@
       </div>
 
       <div class="d-flex align-items-center gap-3">
-        <!-- Campana notificaciones -->
-        <div class="notif-container position-relative">
+        <!-- Campana notificaciones (solo Admin y Bodeguero) -->
+        <div class="notif-container position-relative" *ngIf="rolId === 1 || rolId === 2">
           <button class="btn btn-notif" (click)="toggleNotificaciones()" aria-label="Notificaciones">
             <i class="bi bi-bell"></i>
             <span class="notif-badge" *ngIf="alertas.length > 0">{{ alertas.length }}</span>
@@ -175,7 +182,7 @@
         </div>
 
         <div class="usuario-info">
-          <small>{{ rolId === 1 ? 'Administrador' : 'Bodeguero' }}</small>
+          <small>{{ rolId === 1 ? 'Administrador' : rolId === 2 ? 'Bodeguero' : 'Cliente' }}</small>
         </div>
       </div>
 
