@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-login',
@@ -27,7 +28,12 @@ export class LoginComponent {
 
       this.authService.saveToken(res.token);
 
-      this.router.navigate(['/dashboard']);
+      const user: any = jwtDecode(res.token);
+      if (user.rol_id === 3) {
+        this.router.navigate(['/inicio']);
+      } else {
+        this.router.navigate(['/dashboard']);
+      }
     },
     error: (err) => {
       console.error(err);

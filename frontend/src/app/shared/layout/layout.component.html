@@ -18,6 +18,13 @@
 
       <ul class="nav flex-column">
 
+        <!-- Inicio (Cliente) -->
+        <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 3">
+          <a class="nav-link text-white" routerLink="/inicio">
+            <i class="bi bi-house-door me-2"></i>Inicio
+          </a>
+        </li>
+
         <li class="nav-item" routerLinkActive="active">
           <a class="nav-link text-white" routerLink="/dashboard">
             <i class="bi bi-speedometer2 me-2"></i>Dashboard
@@ -96,7 +103,6 @@
           </a>
         </li>
 
-        <!-- CLIENTE -->
         <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 3">
           <a class="nav-link text-white" routerLink="/catalogo">
             <i class="bi bi-shop me-2"></i>Catálogo
@@ -152,6 +158,56 @@
       </div>
 
       <div class="d-flex align-items-center gap-3">
+        <!-- Carrito de compras (solo Cliente) -->
+        <div class="carrito-container position-relative" *ngIf="rolId === 3">
+          <button class="btn btn-notif" (click)="toggleCarrito($event)" aria-label="Carrito de compras">
+            <i class="bi bi-cart3"></i>
+            <span class="notif-badge" *ngIf="carritoItems.length > 0">{{ carritoService.obtenerCantidad() }}</span>
+          </button>
+
+          <div class="carrito-dropdown" *ngIf="showCarrito">
+            <div class="carrito-header">
+              <i class="bi bi-cart3"></i>
+              <span>Mi Carrito</span>
+            </div>
+            <div class="carrito-lista">
+              <div class="carrito-item" *ngFor="let item of carritoItems">
+                <div class="carrito-item-img" *ngIf="item.imagen">
+                  <img [src]="item.imagen" alt="{{ item.nombre }}">
+                </div>
+                <div class="carrito-item-img carrito-item-placeholder" *ngIf="!item.imagen">
+                  <i class="bi bi-box-seam"></i>
+                </div>
+                <div class="carrito-item-info">
+                  <span class="carrito-item-nombre">{{ item.nombre }}</span>
+                  <span class="carrito-item-cantidad">x{{ item.cantidad }} - ${{ item.precio * item.cantidad }}</span>
+                </div>
+                <button class="btn btn-sm carrito-item-eliminar" (click)="eliminarDelCarrito(item.producto_id)" title="Eliminar">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+              <div class="carrito-empty" *ngIf="carritoItems.length === 0">
+                <i class="bi bi-cart-x" style="font-size: 28px; opacity: 0.3;"></i>
+                <p>El carrito está vacío</p>
+              </div>
+            </div>
+            <div class="carrito-footer" *ngIf="carritoItems.length > 0">
+              <div class="carrito-total">
+                <span>Total:</span>
+                <strong>${{ carritoTotal }}</strong>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-vaciar" (click)="vaciarCarrito()">
+                  <i class="bi bi-trash"></i>
+                </button>
+                <a routerLink="/pago" class="btn btn-sm btn-pagar" (click)="showCarrito = false">
+                  <i class="bi bi-credit-card me-1"></i>Pagar
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Campana notificaciones (solo Admin y Bodeguero) -->
         <div class="notif-container position-relative" *ngIf="rolId === 1 || rolId === 2">
           <button class="btn btn-notif" (click)="toggleNotificaciones()" aria-label="Notificaciones">

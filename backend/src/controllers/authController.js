@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const usuarioModel = require('../models/usuarioModel');
+const clienteModel = require('../models/clienteModel');
 
 const register = async (req, res) => {
 
@@ -90,10 +91,30 @@ const login = async (req, res) => {
             });
         }
 
+        let cliente_id = null;
+        if (usuario.rol_id === 3) {
+            let cliente = await clienteModel.buscarPorCorreo(correo);
+
+            if (!cliente) {
+                cliente = await clienteModel.crearCliente(
+                    usuario.nombre,
+                    usuario.apellido,
+                    usuario.correo,
+                    usuario.password,
+                    null,
+                    null
+                );
+            }
+
+            cliente_id = cliente.id;
+        }
+
         const token = jwt.sign(
             {
                 id: usuario.id,
-                rol_id: usuario.rol_id
+                nombre: usuario.nombre,
+                rol_id: usuario.rol_id,
+                cliente_id
             },
             process.env.JWT_SECRET,
             {

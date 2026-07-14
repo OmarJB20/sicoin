@@ -1,73 +1,123 @@
 <div class="dashboard-container">
 
-  <!-- Stats Cards -->
-  <div class="stats-grid">
+  <!-- CLIENTE -->
+  <ng-container *ngIf="esCliente">
 
-    <div class="stat-card">
-      <div class="card-header">
-        <span>Total Ventas</span>
-        <div class="stat-icon ventas"><i class="bi bi-currency-dollar"></i></div>
-      </div>
-      <h3>${{ resumen.totalVentas }}</h3>
+    <div class="cliente-saludo">
+      <h2>Hola, {{ nombreUsuario }}</h2>
+      <p>Aqui se muestran tus compras anteriores</p>
     </div>
 
-    <div class="stat-card">
-      <div class="card-header">
-        <span>Stock</span>
-        <div class="stat-icon stock"><i class="bi bi-boxes"></i></div>
+    <div class="stats-grid">
+
+      <div class="stat-card">
+        <div class="card-header">
+          <span>Mis Compras</span>
+          <div class="stat-icon ventas"><i class="bi bi-bag-check"></i></div>
+        </div>
+        <h3>{{ resumen.totalCompras }}</h3>
       </div>
-      <h3>{{ resumen.totalStock }}</h3>
+
+      <div class="stat-card">
+        <div class="card-header">
+          <span>Productos Comprados</span>
+          <div class="stat-icon productos"><i class="bi bi-box-seam"></i></div>
+        </div>
+        <h3>{{ resumen.totalProductosComprados }}</h3>
+      </div>
+
+      <div class="stat-card">
+        <div class="card-header">
+          <span>Total Gastado</span>
+          <div class="stat-icon stock"><i class="bi bi-wallet2"></i></div>
+        </div>
+        <h3>${{ resumen.totalGastado }}</h3>
+      </div>
+
+      <div class="stat-card">
+        <div class="card-header">
+          <span>Compras este mes</span>
+          <div class="stat-icon reportes"><i class="bi bi-calendar-month"></i></div>
+        </div>
+        <h3>{{ resumen.comprasMes }}</h3>
+      </div>
+
     </div>
 
-    <div class="stat-card">
-      <div class="card-header">
-        <span>Productos</span>
-        <div class="stat-icon productos"><i class="bi bi-box-seam"></i></div>
+  </ng-container>
+
+  <!-- ADMIN / BODEGUERO -->
+  <ng-container *ngIf="!esCliente">
+
+    <div class="stats-grid">
+
+      <div class="stat-card">
+        <div class="card-header">
+          <span>Total Ventas</span>
+          <div class="stat-icon ventas"><i class="bi bi-currency-dollar"></i></div>
+        </div>
+        <h3>${{ resumen.totalVentas }}</h3>
       </div>
-      <h3>{{ resumen.totalProductos }}</h3>
+
+      <div class="stat-card">
+        <div class="card-header">
+          <span>Stock</span>
+          <div class="stat-icon stock"><i class="bi bi-boxes"></i></div>
+        </div>
+        <h3>{{ resumen.totalStock }}</h3>
+      </div>
+
+      <div class="stat-card">
+        <div class="card-header">
+          <span>Productos</span>
+          <div class="stat-icon productos"><i class="bi bi-box-seam"></i></div>
+        </div>
+        <h3>{{ resumen.totalProductos }}</h3>
+      </div>
+
+      <div class="stat-card">
+        <div class="card-header">
+          <span>Reportes</span>
+          <div class="stat-icon reportes"><i class="bi bi-file-text"></i></div>
+        </div>
+        <h3>{{ resumen.totalReportes }}</h3>
+      </div>
+
     </div>
 
-    <div class="stat-card">
-      <div class="card-header">
-        <span>Reportes</span>
-        <div class="stat-icon reportes"><i class="bi bi-file-text"></i></div>
-      </div>
-      <h3>{{ resumen.totalReportes }}</h3>
-    </div>
+  </ng-container>
 
-  </div>
-
-  <!-- Sección inferior -->
+  <!-- Gráficas (ambos roles) -->
   <div class="bottom-grid">
 
-    <!-- Gráfico Ventas Semanales -->
     <div class="chart-card">
-
-      <h2>Ventas semanales</h2>
-
-      <div class="chart">
+      <h2 *ngIf="esCliente">Mis compras semanales</h2>
+      <h2 *ngIf="!esCliente">Ventas semanales</h2>
+      <div class="chart" *ngIf="ventasSemanales.length > 0">
         <div class="bar-wrapper" *ngFor="let v of ventasSemanales">
           <div class="bar" [style.height.%]="(v.total / maxVentaSemanal) * 100">
             <span>{{ v.nombre }}</span>
           </div>
         </div>
       </div>
-
+      <div class="chart-vacio" *ngIf="ventasSemanales.length === 0">
+        <p *ngIf="esCliente">No tienes compras esta semana</p>
+      </div>
     </div>
 
-    <!-- Gráfico Ventas por Categoría -->
     <div class="chart-card">
-
-      <h2>Ventas por Categoría</h2>
-
-      <div class="chart">
+      <h2 *ngIf="esCliente">Mis compras por categoria</h2>
+      <h2 *ngIf="!esCliente">Ventas por Categoria</h2>
+      <div class="chart" *ngIf="ventasPorCategoria.length > 0">
         <div class="bar-wrapper" *ngFor="let c of ventasPorCategoria">
           <div class="bar secondary" [style.height.%]="(c.total / maxVentaCategoria) * 100">
             <span>{{ c.categoria }} ({{ c.porcentaje }}%)</span>
           </div>
         </div>
       </div>
-
+      <div class="chart-vacio" *ngIf="ventasPorCategoria.length === 0">
+        <p *ngIf="esCliente">No tienes compras por categoria aun</p>
+      </div>
     </div>
 
   </div>

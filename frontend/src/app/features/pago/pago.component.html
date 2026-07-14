@@ -1,0 +1,86 @@
+<div class="pago-container">
+
+  <div *ngIf="items.length === 0" class="pago-vacio">
+    <div class="pago-vacio-icon">
+      <i class="bi bi-cart-x"></i>
+    </div>
+    <h5>No hay productos en el carrito</h5>
+    <p class="text-muted">Agrega productos desde el catálogo para continuar.</p>
+    <a routerLink="/catalogo" class="btn btn-primary">
+      <i class="bi bi-shop me-2"></i>Ir al Catálogo
+    </a>
+  </div>
+
+  <div *ngIf="items.length > 0">
+
+    <div class="pago-resumen">
+      <h5 class="pago-titulo">
+        <i class="bi bi-receipt me-2"></i>Resumen de Compra
+      </h5>
+
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th class="text-center">Cant.</th>
+              <th class="text-end">Precio</th>
+              <th class="text-end">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of items">
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="pago-item-img" *ngIf="item.imagen">
+                    <img [src]="item.imagen" alt="{{ item.nombre }}">
+                  </div>
+                  <div class="pago-item-img pago-item-placeholder" *ngIf="!item.imagen">
+                    <i class="bi bi-box-seam"></i>
+                  </div>
+                  <span class="pago-item-nombre">{{ item.nombre }}</span>
+                </div>
+              </td>
+              <td class="text-center align-middle">{{ item.cantidad }}</td>
+              <td class="text-end align-middle">${{ item.precio }}</td>
+              <td class="text-end align-middle fw-semibold">${{ item.precio * item.cantidad }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pago-total">
+        <span>Total a pagar:</span>
+        <strong>${{ total }}</strong>
+      </div>
+    </div>
+
+    <div class="pago-metodos">
+      <h5 class="metodos-titulo">Método de Pago</h5>
+      <p class="text-muted mb-3">Seleccione cómo desea realizar el pago:</p>
+
+      <div class="row g-3">
+        <div class="col-sm-6">
+          <button class="metodo-btn metodo-transferencia" (click)="pagar('transferencia')">
+            <div class="metodo-icon">
+              <i class="bi bi-bank"></i>
+            </div>
+            <h6>Transferencia Bancaria</h6>
+            <p>Acérquese al mostrador con su comprobante</p>
+          </button>
+        </div>
+        <div class="col-sm-6">
+          <button class="metodo-btn metodo-efectivo" (click)="pagar('efectivo')">
+            <div class="metodo-icon">
+              <i class="bi bi-cash-stack"></i>
+            </div>
+            <h6>Efectivo</h6>
+            <p>Acérquese al mostrador para pagar</p>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

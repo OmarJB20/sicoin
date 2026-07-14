@@ -1,24 +1,89 @@
-<div class="catalogo-container">
-  <div class="contenedor-catalogo">
-    <div *ngIf="productos.length === 0" class="alert alert-info text-center">No hay productos disponibles</div>
+<div class="catalogo-layout">
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3">
-      <div class="col" *ngFor="let p of productos">
-        <div class="card h-100 catalogo-card">
-          <div class="catalogo-img-wrapper">
-            <img *ngIf="p.imagen" [src]="p.imagen" alt="{{ p.nombre }}" class="catalogo-img">
-            <div *ngIf="!p.imagen" class="catalogo-img-placeholder">
-              <i class="bi bi-box-seam"></i>
+  <!-- Barra de búsqueda -->
+  <div class="catalogo-buscar">
+    <div class="buscar-wrapper">
+      <i class="bi bi-search buscar-icono"></i>
+      <input
+        type="text"
+        class="form-control buscar-input"
+        placeholder="Buscar productos..."
+        [(ngModel)]="textoBusqueda"
+        (ngModelChange)="filtrarProductos()"
+      />
+      <button *ngIf="textoBusqueda" class="btn btn-sm buscar-limpiar" (click)="textoBusqueda = ''; filtrarProductos()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="catalogo-body">
+
+    <!-- Sidebar categorías -->
+    <aside class="catalogo-sidebar">
+      <h6 class="sidebar-titulo">
+        <i class="bi bi-tag me-2"></i>Categorías
+      </h6>
+      <ul class="sidebar-lista">
+        <li
+          class="sidebar-item"
+          [class.active]="categoriaSeleccionada === null"
+          (click)="seleccionarCategoria(null)"
+        >
+          <span class="sidebar-nombre">Todas</span>
+          <span class="sidebar-badge">{{ productos.length }}</span>
+        </li>
+        <li
+          class="sidebar-item"
+          *ngFor="let c of categorias"
+          [class.active]="categoriaSeleccionada === c.id"
+          (click)="seleccionarCategoria(c.id)"
+        >
+          <span class="sidebar-nombre">{{ c.nombre }}</span>
+          <span class="sidebar-badge">{{ contarProductosCategoria(c.id) }}</span>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Contenido productos -->
+    <div class="catalogo-contenido">
+
+      <div *ngIf="productosFiltrados.length === 0" class="alert alert-info text-center">
+        <i class="bi bi-info-circle me-1"></i>No se encontraron productos
+      </div>
+
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3">
+        <div class="col" *ngFor="let p of productosFiltrados">
+          <div class="card h-100 catalogo-card">
+            <div class="catalogo-img-wrapper">
+              <div *ngIf="p.stock === 0" class="stock-badge stock-agotado">
+                <i class="bi bi-x-circle"></i> No disponible
+              </div>
+              <div *ngIf="p.stock > 0 && p.stock <= 5" class="stock-badge stock-bajo">
+                <i class="bi bi-exclamation-triangle"></i> Solo quedan {{ p.stock }} unidades
+              </div>
+              <img *ngIf="p.imagen" [src]="p.imagen" alt="{{ p.nombre }}" class="catalogo-img">
+              <div *ngIf="!p.imagen" class="catalogo-img-placeholder">
+                <i class="bi bi-box-seam"></i>
+              </div>
             </div>
-          </div>
-          <div class="card-body d-flex flex-column">
-            <h6 class="catalogo-nombre mb-1">{{ p.nombre }}</h6>
-            <p class="catalogo-descripcion text-muted mb-1">{{ p.descripcion || '' }}</p>
-            <p class="catalogo-categoria text-muted small mb-1">{{ p.categoria }}</p>
-            <p class="catalogo-precio mt-auto mb-0">${{ p.precio }}</p>
+            <div class="card-body d-flex flex-column">
+              <h6 class="catalogo-nombre mb-1">{{ p.nombre }}</h6>
+              <p class="catalogo-descripcion text-muted mb-1">{{ p.descripcion || '' }}</p>
+              <p class="catalogo-categoria text-muted small mb-1">{{ p.categoria }}</p>
+              <div class="d-flex align-items-center justify-content-between mt-auto">
+                <p class="catalogo-precio mb-0">${{ p.precio }}</p>
+                <button class="btn btn-sm btn-carrito" [disabled]="p.stock === 0" (click)="agregarAlCarrito(p)" [title]="p.stock === 0 ? 'Sin stock' : 'Agregar al carrito'">
+                  <i class="bi bi-cart-plus"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
+
   </div>
+
 </div>

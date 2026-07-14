@@ -12,6 +12,8 @@ import { VentasComponent } from './features/ventas/ventas.component';
 import { ReportesComponent } from './features/reportes/reportes.component';
 import { PerfilComponent } from './features/perfil/perfil.component';
 import { AutorizacionComponent } from './features/autorizacion/autorizacion.component';
+import { InicioComponent } from './features/inicio/inicio.component';
+import { PagoComponent } from './features/pago/pago.component';
 
 import { LayoutComponent } from './shared/layout/layout.component';
 
@@ -97,6 +99,22 @@ export const routes: Routes = [
       {
         path: 'catalogo',
         component: CatalogoComponent,
+        canActivate: [roleGuard],
+        data: { roles: [3] }
+      },
+
+      // Inicio (Cliente)
+      {
+        path: 'inicio',
+        component: InicioComponent,
+        canActivate: [roleGuard],
+        data: { roles: [3] }
+      },
+
+      // Pago (Cliente)
+      {
+        path: 'pago',
+        component: PagoComponent,
         canActivate: [roleGuard],
         data: { roles: [3] }
       },

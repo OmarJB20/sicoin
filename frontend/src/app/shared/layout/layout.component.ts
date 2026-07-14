@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, HostListener } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { EstadisticaService } from '../../core/services/estadistica.service';
+import { CarritoService, CarritoItem } from '../../core/services/carrito.service';
 import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -21,9 +22,13 @@ export class LayoutComponent implements OnInit, OnDestroy {
   subNavReportesOpen = false;
   alertas: any[] = [];
   showNotificaciones = false;
+  showCarrito = false;
   rolId: number | null = null;
+  carritoItems: CarritoItem[] = [];
+  carritoTotal = 0;
   private routeSubscription?: Subscription;
   private alertaSubscription?: Subscription;
+  private carritoSubscription?: Subscription;
 
   private routeTitles: Record<string, string> = {
     '/dashboard': 'DASHBOARD',
@@ -40,13 +45,16 @@ export class LayoutComponent implements OnInit, OnDestroy {
     '/perfil': 'PERFIL',
     '/inventario': 'CONTROL DE INVENTARIO',
     '/autorizaciones': 'AUTORIZACIÓN DE REGISTROS',
-    '/catalogo': 'CATÁLOGO'
+    '/catalogo': 'CATÁLOGO',
+    '/inicio': 'INICIO',
+    '/pago': 'PAGO'
   };
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private estadisticaService: EstadisticaService
+    private estadisticaService: EstadisticaService,
+    public carritoService: CarritoService
   ) {}
 
   ngOnInit() {
@@ -68,11 +76,17 @@ export class LayoutComponent implements OnInit, OnDestroy {
       });
 
     this.cargarAlertas();
+
+    this.carritoSubscription = this.carritoService.items.subscribe(items => {
+      this.carritoItems = items;
+      this.carritoTotal = this.carritoService.obtenerTotal();
+    });
   }
 
   ngOnDestroy() {
     this.routeSubscription?.unsubscribe();
     this.alertaSubscription?.unsubscribe();
+    this.carritoSubscription?.unsubscribe();
   }
 
   @HostListener('document:click', ['$event'])
@@ -80,6 +94,9 @@ export class LayoutComponent implements OnInit, OnDestroy {
     const target = event.target as HTMLElement;
     if (!target.closest('.notif-container')) {
       this.showNotificaciones = false;
+    }
+    if (!target.closest('.carrito-container')) {
+      this.showCarrito = false;
     }
   }
 
@@ -124,6 +141,19 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   closeSidebar() {
     this.sidebarOpen = false;
+  }
+
+  toggleCarrito(event: MouseEvent) {
+    event.stopPropagation();
+    this.showCarrito = !this.showCarrito;
+  }
+
+  eliminarDelCarrito(productoId: number) {
+    this.carritoService.eliminar(productoId);
+  }
+
+  vaciarCarrito() {
+    this.carritoService.limpiar();
   }
 
   logout() {

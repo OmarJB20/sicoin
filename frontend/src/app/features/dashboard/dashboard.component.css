@@ -3,6 +3,37 @@
   min-height: 100%;
 }
 
+/* ─── Saludo Cliente ─── */
+.cliente-saludo {
+  margin-bottom: 24px;
+}
+
+.cliente-saludo h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
+
+.cliente-saludo p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ─── Chart Vacío ─── */
+.chart-vacio {
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-vacio p {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
 /* ─── Stats Cards ─── */
 .stats-grid {
   display: grid;

@@ -14,4 +14,8 @@ export class DashboardService {
   obtenerDashboard() {
     return this.http.get(`${this.apiUrl}/dashboard`);
   }
+
+  obtenerDashboardCliente() {
+    return this.http.get(`${this.apiUrl}/dashboard/cliente`);
+  }
 }
