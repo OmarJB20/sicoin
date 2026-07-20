@@ -9,7 +9,9 @@ const {
     registrarVenta,
     listarVentas,
     detalleVenta,
-    anularVenta
+    anularVenta,
+    listarVentasPorCliente,
+    detalleVentaPorCliente
 } = require('../controllers/ventaController');
 
 router.post(
@@ -25,9 +27,21 @@ router.get(
 );
 
 router.get(
+    '/mis-compras',
+    verificarToken,
+    listarVentasPorCliente
+);
+
+router.get(
     '/:id',
     verificarToken,
     detalleVenta
+);
+
+router.get(
+    '/:id/detalle-cliente',
+    verificarToken,
+    detalleVentaPorCliente
 );
 
 router.put(

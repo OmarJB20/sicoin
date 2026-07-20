@@ -47,7 +47,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
     '/autorizaciones': 'AUTORIZACIÓN DE REGISTROS',
     '/catalogo': 'CATÁLOGO',
     '/inicio': 'INICIO',
-    '/pago': 'PAGO'
+    '/pago': 'PAGO',
+    '/mis-compras': 'MIS COMPRAS'
   };
 
   constructor(

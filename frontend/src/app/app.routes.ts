@@ -14,6 +14,7 @@ import { PerfilComponent } from './features/perfil/perfil.component';
 import { AutorizacionComponent } from './features/autorizacion/autorizacion.component';
 import { InicioComponent } from './features/inicio/inicio.component';
 import { PagoComponent } from './features/pago/pago.component';
+import { HistorialComprasComponent } from './features/historial-compras/historial-compras.component';
 
 import { LayoutComponent } from './shared/layout/layout.component';
 
@@ -115,6 +116,14 @@ export const routes: Routes = [
       {
         path: 'pago',
         component: PagoComponent,
+        canActivate: [roleGuard],
+        data: { roles: [3] }
+      },
+
+      // Mis Compras (Cliente)
+      {
+        path: 'mis-compras',
+        component: HistorialComprasComponent,
         canActivate: [roleGuard],
         data: { roles: [3] }
       },

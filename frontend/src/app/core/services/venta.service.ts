@@ -26,4 +26,12 @@ export class VentaService {
   anular(id: number) {
     return this.http.put(`${this.apiUrl}/ventas/${id}/anular`, {});
   }
+
+  listarPorCliente() {
+    return this.http.get(`${this.apiUrl}/ventas/mis-compras`);
+  }
+
+  detallePorCliente(id: number) {
+    return this.http.get(`${this.apiUrl}/ventas/${id}/detalle-cliente`);
+  }
 }

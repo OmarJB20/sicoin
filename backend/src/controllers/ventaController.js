@@ -104,9 +104,63 @@ const anularVenta = async (
 
 };
 
+const listarVentasPorCliente = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const cliente_id = req.usuario.cliente_id;
+
+        const ventas =
+            await ventaModel.obtenerVentasPorCliente(cliente_id);
+
+        res.json(ventas);
+
+    } catch (error) {
+
+        res.status(500).json({
+            mensaje: error.message
+        });
+
+    }
+
+};
+
+const detalleVentaPorCliente = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const { id } = req.params;
+        const cliente_id = req.usuario.cliente_id;
+
+        const detalle =
+            await ventaModel.obtenerDetalleVentaPorCliente(
+                id,
+                cliente_id
+            );
+
+        res.json(detalle);
+
+    } catch (error) {
+
+        res.status(500).json({
+            mensaje: error.message
+        });
+
+    }
+
+};
+
 module.exports = {
     registrarVenta,
     listarVentas,
     detalleVenta,
-    anularVenta
+    anularVenta,
+    listarVentasPorCliente,
+    detalleVentaPorCliente
 };

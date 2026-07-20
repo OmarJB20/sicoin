@@ -263,9 +263,49 @@ const anularVenta = async (id) => {
 
 };
 
+const obtenerVentasPorCliente = async (cliente_id) => {
+
+    const result = await pool.query(`
+        SELECT
+            v.id,
+            v.total,
+            v.estado,
+            v.fecha,
+            (
+                SELECT COUNT(dv.id)
+                FROM detalle_ventas dv
+                WHERE dv.venta_id = v.id
+            ) AS num_productos
+        FROM ventas v
+        WHERE v.cliente_id = $1
+        ORDER BY v.fecha DESC
+    `, [cliente_id]);
+
+    return result.rows;
+};
+
+const obtenerDetalleVentaPorCliente = async (ventaId, cliente_id) => {
+
+    const result = await pool.query(`
+        SELECT
+            dv.cantidad,
+            dv.precio_unitario,
+            dv.subtotal,
+            p.nombre AS producto
+        FROM detalle_ventas dv
+        INNER JOIN productos p ON p.id = dv.producto_id
+        INNER JOIN ventas v ON v.id = dv.venta_id
+        WHERE dv.venta_id = $1 AND v.cliente_id = $2
+    `, [ventaId, cliente_id]);
+
+    return result.rows;
+};
+
 module.exports = {
     crearVenta,
     obtenerVentas,
     obtenerDetalleVenta,
-    anularVenta
+    anularVenta,
+    obtenerVentasPorCliente,
+    obtenerDetalleVentaPorCliente
 };

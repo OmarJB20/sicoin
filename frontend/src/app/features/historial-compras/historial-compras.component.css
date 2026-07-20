@@ -1,0 +1,49 @@
+.compras-container {
+  min-height: 300px;
+}
+
+.contenedor-compras {
+  background: #fff;
+  border-radius: var(--border-radius);
+  padding: 24px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--card-border);
+}
+
+.input-buscar {
+  max-width: 400px;
+}
+
+.input-buscar .input-group-text {
+  border-right: none;
+  background: #fff;
+  color: var(--text-muted);
+}
+
+.input-buscar .form-control {
+  border-left: none;
+}
+
+.input-buscar .form-control:focus {
+  border-left: none;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 14px;
+}
+
+.empty-state i {
+  color: var(--text-muted);
+}
+
+@media (max-width: 575.98px) {
+  .contenedor-compras {
+    padding: 16px;
+  }
+
+  .input-buscar {
+    max-width: 100%;
+  }
+}
