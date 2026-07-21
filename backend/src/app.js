@@ -15,6 +15,7 @@ const reporteRoutes = require('./routes/reporteRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const estadisticaRoutes = require('./routes/estadisticaRoutes');
 const autorizacionRoutes = require('./routes/autorizacionRoutes');
+const facturaRoutes = require('./routes/facturaRoutes');
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use('/api/reportes', reporteRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/estadisticas', verificarToken, estadisticaRoutes);
 app.use('/api/autorizaciones', verificarToken, autorizacionRoutes);
+app.use('/api/facturas', facturaRoutes);
 
 // Ruta principal
 app.get('/', (req, res) => {

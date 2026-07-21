@@ -55,13 +55,14 @@
       </div>
     </div>
 
-    <div class="pago-metodos">
+    <!-- Métodos de pago (si no hay método seleccionado o es Cliente) -->
+    <div class="pago-metodos" *ngIf="!metodoSeleccionado">
       <h5 class="metodos-titulo">Método de Pago</h5>
       <p class="text-muted mb-3">Seleccione cómo desea realizar el pago:</p>
 
       <div class="row g-3">
         <div class="col-sm-6">
-          <button class="metodo-btn metodo-transferencia" (click)="pagar('transferencia')">
+          <button class="metodo-btn metodo-transferencia" (click)="seleccionarMetodo('transferencia')">
             <div class="metodo-icon">
               <i class="bi bi-bank"></i>
             </div>
@@ -70,7 +71,7 @@
           </button>
         </div>
         <div class="col-sm-6">
-          <button class="metodo-btn metodo-efectivo" (click)="pagar('efectivo')">
+          <button class="metodo-btn metodo-efectivo" (click)="seleccionarMetodo('efectivo')">
             <div class="metodo-icon">
               <i class="bi bi-cash-stack"></i>
             </div>
@@ -78,6 +79,90 @@
             <p>Acérquese al mostrador para pagar</p>
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Formulario de facturación (Cajero) -->
+    <div class="pago-factura" *ngIf="metodoSeleccionado">
+      <div class="factura-header">
+        <h5 class="metodos-titulo">
+          <i class="bi bi-file-earmark-text me-2"></i>Datos de Facturación
+        </h5>
+        <span class="badge rounded-pill" [class.bg-success]="metodoSeleccionado === 'efectivo'" [class.bg-primary]="metodoSeleccionado === 'transferencia'">
+          {{ metodoSeleccionado === 'transferencia' ? 'Transferencia Bancaria' : 'Efectivo' }}
+        </span>
+      </div>
+
+      <div class="row g-3 mt-1">
+
+        <div class="col-sm-6">
+          <label class="form-label">Nombre / Razón Social <span class="text-danger">*</span></label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="formFactura.nombre_cliente"
+            placeholder="Nombre completo o razón social"
+          />
+        </div>
+
+        <div class="col-sm-6">
+          <label class="form-label">Cédula / RUC <span class="text-danger">*</span></label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="formFactura.cedula_ruc"
+            placeholder="Número de identificación"
+          />
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Dirección <span class="text-danger">*</span></label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="formFactura.direccion"
+            placeholder="Dirección completa"
+          />
+        </div>
+
+        <div class="col-sm-6">
+          <label class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
+          <input
+            type="email"
+            class="form-control"
+            [(ngModel)]="formFactura.correo"
+            placeholder="correo@ejemplo.com"
+          />
+        </div>
+
+        <div class="col-sm-6">
+          <label class="form-label">Teléfono <span class="text-danger">*</span></label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="formFactura.telefono"
+            placeholder="Número de teléfono"
+          />
+        </div>
+
+      </div>
+
+      <div class="factura-total">
+        <span>Total:</span>
+        <strong>${{ total }}</strong>
+      </div>
+
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-outline-secondary" (click)="cancelarFactura()">
+          <i class="bi bi-arrow-left me-1"></i>Volver
+        </button>
+        <button
+          class="btn btn-guardar"
+          [disabled]="!formularioCompleto"
+          (click)="generarFactura()"
+        >
+          <i class="bi bi-file-earmark-check me-1"></i>Generar Factura
+        </button>
       </div>
     </div>
 

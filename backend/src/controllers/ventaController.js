@@ -1,6 +1,9 @@
 const ventaModel =
 require('../models/ventaModel');
 
+const facturaModel =
+require('../models/facturaModel');
+
 const registrarVenta = async (
     req,
     res
@@ -156,8 +159,64 @@ const detalleVentaPorCliente = async (
 
 };
 
+const registrarVentaPendiente = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const {
+            productos,
+            nombre_cliente,
+            cedula_ruc,
+            direccion,
+            correo,
+            telefono,
+            metodo_pago
+        } = req.body;
+
+        const venta =
+            await ventaModel.crearVentaPendiente(
+                productos
+            );
+
+        const factura =
+            await facturaModel.crear(
+                venta.venta_id,
+                req.usuario.id,
+                nombre_cliente,
+                cedula_ruc,
+                direccion,
+                correo,
+                telefono,
+                metodo_pago
+            );
+
+        await facturaModel.crearAutorizaciones(
+            factura.id,
+            productos
+        );
+
+        res.status(201).json({
+            mensaje: 'Factura generada',
+            venta,
+            factura
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            mensaje: error.message
+        });
+
+    }
+
+};
+
 module.exports = {
     registrarVenta,
+    registrarVentaPendiente,
     listarVentas,
     detalleVenta,
     anularVenta,

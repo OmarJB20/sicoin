@@ -18,8 +18,8 @@
 
       <ul class="nav flex-column">
 
-        <!-- Inicio (Cliente) -->
-        <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 3">
+        <!-- Inicio (Cliente/Cajero) -->
+        <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 3 || rolId === 4">
           <a class="nav-link text-white" routerLink="/inicio">
             <i class="bi bi-house-door me-2"></i>Inicio
           </a>
@@ -103,7 +103,13 @@
           </a>
         </li>
 
-        <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 3">
+        <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 2">
+          <a class="nav-link text-white" routerLink="/facturas-pendientes">
+            <i class="bi bi-file-earmark-text me-2"></i>Facturas Pendientes
+          </a>
+        </li>
+
+        <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 3 || rolId === 4">
           <a class="nav-link text-white" routerLink="/catalogo">
             <i class="bi bi-shop me-2"></i>Catálogo
           </a>
@@ -112,6 +118,12 @@
         <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 3">
           <a class="nav-link text-white" routerLink="/mis-compras">
             <i class="bi bi-bag-check me-2"></i>Mis Compras
+          </a>
+        </li>
+
+        <li class="nav-item" routerLinkActive="active" *ngIf="rolId === 4">
+          <a class="nav-link text-white" routerLink="/mis-facturas">
+            <i class="bi bi-file-earmark-text me-2"></i>Mis Facturas
           </a>
         </li>
 
@@ -164,8 +176,8 @@
       </div>
 
       <div class="d-flex align-items-center gap-3">
-        <!-- Carrito de compras (solo Cliente) -->
-        <div class="carrito-container position-relative" *ngIf="rolId === 3">
+        <!-- Carrito de compras (Cliente/Cajero) -->
+        <div class="carrito-container position-relative" *ngIf="rolId === 3 || rolId === 4">
           <button class="btn btn-notif" (click)="toggleCarrito($event)" aria-label="Carrito de compras">
             <i class="bi bi-cart3"></i>
             <span class="notif-badge" *ngIf="carritoItems.length > 0">{{ carritoService.obtenerCantidad() }}</span>
@@ -244,7 +256,7 @@
         </div>
 
         <div class="usuario-info">
-          <small>{{ rolId === 1 ? 'Administrador' : rolId === 2 ? 'Bodeguero' : 'Cliente' }}</small>
+          <small>{{ rolId === 1 ? 'Administrador' : rolId === 2 ? 'Bodeguero' : rolId === 4 ? 'Cajero' : 'Cliente' }}</small>
         </div>
       </div>
 

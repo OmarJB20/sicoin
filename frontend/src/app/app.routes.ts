@@ -15,6 +15,8 @@ import { AutorizacionComponent } from './features/autorizacion/autorizacion.comp
 import { InicioComponent } from './features/inicio/inicio.component';
 import { PagoComponent } from './features/pago/pago.component';
 import { HistorialComprasComponent } from './features/historial-compras/historial-compras.component';
+import { FacturasPendientesComponent } from './features/facturas-pendientes/facturas-pendientes.component';
+import { MisFacturasComponent } from './features/mis-facturas/mis-facturas.component';
 
 import { LayoutComponent } from './shared/layout/layout.component';
 
@@ -101,7 +103,7 @@ export const routes: Routes = [
         path: 'catalogo',
         component: CatalogoComponent,
         canActivate: [roleGuard],
-        data: { roles: [3] }
+        data: { roles: [3, 4] }
       },
 
       // Inicio (Cliente)
@@ -109,7 +111,7 @@ export const routes: Routes = [
         path: 'inicio',
         component: InicioComponent,
         canActivate: [roleGuard],
-        data: { roles: [3] }
+        data: { roles: [3, 4] }
       },
 
       // Pago (Cliente)
@@ -117,7 +119,7 @@ export const routes: Routes = [
         path: 'pago',
         component: PagoComponent,
         canActivate: [roleGuard],
-        data: { roles: [3] }
+        data: { roles: [3, 4] }
       },
 
       // Mis Compras (Cliente)
@@ -125,7 +127,7 @@ export const routes: Routes = [
         path: 'mis-compras',
         component: HistorialComprasComponent,
         canActivate: [roleGuard],
-        data: { roles: [3] }
+        data: { roles: [3, 4] }
       },
 
       // Bodeguero
@@ -140,6 +142,20 @@ export const routes: Routes = [
         component: AutorizacionComponent,
         canActivate: [roleGuard],
         data: { roles: [2] }
+      },
+      {
+        path: 'facturas-pendientes',
+        component: FacturasPendientesComponent,
+        canActivate: [roleGuard],
+        data: { roles: [2] }
+      },
+
+      // Cajero
+      {
+        path: 'mis-facturas',
+        component: MisFacturasComponent,
+        canActivate: [roleGuard],
+        data: { roles: [4] }
       }
 
     ]

@@ -175,7 +175,7 @@ const obtenerVentas = async () => {
                 WHERE dv.venta_id = v.id
             ) AS num_productos
         FROM ventas v
-        INNER JOIN clientes c
+        LEFT JOIN clientes c
             ON v.cliente_id = c.id
         ORDER BY v.id DESC
     `);
@@ -301,8 +301,107 @@ const obtenerDetalleVentaPorCliente = async (ventaId, cliente_id) => {
     return result.rows;
 };
 
+const crearVentaPendiente = async (productos) => {
+
+    const client = await pool.connect();
+
+    try {
+
+        await client.query('BEGIN');
+
+        let total = 0;
+
+        const ventaResult = await client.query(
+            `
+            INSERT INTO ventas
+            (cliente_id, total, estado)
+            VALUES (NULL, 0, 'PENDIENTE')
+            RETURNING *
+            `
+        );
+
+        const venta = ventaResult.rows[0];
+
+        for (const item of productos) {
+
+            const productoResult = await client.query(
+                `
+                SELECT *
+                FROM productos
+                WHERE id = $1
+                `,
+                [item.producto_id]
+            );
+
+            if (productoResult.rows.length === 0) {
+                throw new Error(
+                    `Producto ${item.producto_id} no existe`
+                );
+            }
+
+            const producto = productoResult.rows[0];
+
+            const subtotal =
+                Number(producto.precio) *
+                Number(item.cantidad);
+
+            total += subtotal;
+
+            await client.query(
+                `
+                INSERT INTO detalle_ventas
+                (
+                    venta_id,
+                    producto_id,
+                    cantidad,
+                    precio_unitario,
+                    subtotal
+                )
+                VALUES ($1,$2,$3,$4,$5)
+                `,
+                [
+                    venta.id,
+                    item.producto_id,
+                    item.cantidad,
+                    producto.precio,
+                    subtotal
+                ]
+            );
+
+        }
+
+        await client.query(
+            `
+            UPDATE ventas
+            SET total = $1
+            WHERE id = $2
+            `,
+            [total, venta.id]
+        );
+
+        await client.query('COMMIT');
+
+        return {
+            venta_id: venta.id,
+            total
+        };
+
+    } catch (error) {
+
+        await client.query('ROLLBACK');
+        throw error;
+
+    } finally {
+
+        client.release();
+
+    }
+
+};
+
 module.exports = {
     crearVenta,
+    crearVentaPendiente,
     obtenerVentas,
     obtenerDetalleVenta,
     anularVenta,

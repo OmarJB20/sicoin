@@ -1,0 +1,157 @@
+<div class="facturas-container">
+
+  <div class="contenedor-facturas">
+
+    <!-- Loading -->
+    <div *ngIf="cargando" class="text-center py-5">
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+
+    <!-- Sin facturas -->
+    <div *ngIf="!cargando && facturas.length === 0" class="empty-state text-center py-5">
+      <i class="bi bi-check-circle" style="font-size: 60px; opacity: 0.2; color: #198754;"></i>
+      <h5 class="mt-3 text-muted">No hay facturas pendientes</h5>
+      <p class="text-muted small">Todas las facturas han sido procesadas.</p>
+    </div>
+
+    <!-- Tabla de Facturas -->
+    <div class="table-responsive" *ngIf="!cargando && facturas.length > 0">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Cédula/RUC</th>
+            <th>Método Pago</th>
+            <th>Total</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let f of facturas">
+            <td class="fw-semibold">#{{ f.id }}</td>
+            <td class="text-nowrap">{{ f.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ f.nombre_cliente }}</td>
+            <td>{{ f.cedula_ruc }}</td>
+            <td>
+              <span class="badge rounded-pill"
+                [class.bg-success]="f.metodo_pago === 'efectivo'"
+                [class.bg-primary]="f.metodo_pago === 'transferencia'">
+                {{ f.metodo_pago === 'transferencia' ? 'Transferencia' : 'Efectivo' }}
+              </span>
+            </td>
+            <td class="fw-semibold text-success">${{ formatMoney(f.total) }}</td>
+            <td class="text-center">
+              <div class="d-flex gap-1 justify-content-center">
+                <button class="btn btn-sm btn-outline-info" title="Ver detalle"
+                  data-bs-toggle="modal" data-bs-target="#modalDetalleFactura"
+                  (click)="verDetalle(f)">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-success" title="Procesar salida"
+                  (click)="procesarSalida(f)">
+                  <i class="bi bi-box-arrow-down me-1"></i>Procesar
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- MODAL DETALLE FACTURA -->
+<div class="modal fade" id="modalDetalleFactura" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Factura #{{ facturaSeleccionada?.id }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="row mb-3">
+          <div class="col-sm-6">
+            <span class="text-muted">Cliente: </span>
+            <span class="fw-semibold">{{ facturaSeleccionada?.nombre_cliente }}</span><br>
+            <span class="text-muted">Cédula/RUC: </span>
+            <span class="fw-semibold">{{ facturaSeleccionada?.cedula_ruc }}</span><br>
+            <span class="text-muted">Dirección: </span>
+            <span class="fw-semibold">{{ facturaSeleccionada?.direccion }}</span>
+          </div>
+          <div class="col-sm-6">
+            <span class="text-muted">Correo: </span>
+            <span class="fw-semibold">{{ facturaSeleccionada?.correo }}</span><br>
+            <span class="text-muted">Teléfono: </span>
+            <span class="fw-semibold">{{ facturaSeleccionada?.telefono }}</span><br>
+            <span class="text-muted">Método de pago: </span>
+            <span class="badge rounded-pill"
+              [class.bg-success]="facturaSeleccionada?.metodo_pago === 'efectivo'"
+              [class.bg-primary]="facturaSeleccionada?.metodo_pago === 'transferencia'">
+              {{ facturaSeleccionada?.metodo_pago === 'transferencia' ? 'Transferencia' : 'Efectivo' }}
+            </span>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="table-responsive" *ngIf="detalleFactura.length > 0">
+          <table class="table table-sm align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Stock Actual</th>
+                <th>P. Unitario</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let d of detalleFactura">
+                <td>{{ d.producto }}</td>
+                <td>{{ d.cantidad }}</td>
+                <td>
+                  <span class="badge rounded-pill"
+                    [class.bg-danger]="d.stock < d.cantidad"
+                    [class.bg-warning]="d.stock >= d.cantidad && d.stock <= 5"
+                    [class.bg-success]="d.stock > 5">
+                    {{ d.stock }}
+                  </span>
+                </td>
+                <td>${{ formatMoney(d.precio_unitario) }}</td>
+                <td class="fw-semibold">${{ formatMoney(d.subtotal) }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="table-light fw-bold">
+                <td colspan="4" class="text-end">Total:</td>
+                <td class="text-success">${{ formatMoney(facturaSeleccionada?.total) }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div *ngIf="facturaSeleccionada?.estado === 'PENDIENTE'" class="alert alert-warning text-center mt-3 mb-0">
+          <i class="bi bi-exclamation-triangle me-1"></i>
+          Esta factura está pendiente de procesar. El stock aún no fue descontado.
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-success"
+          *ngIf="facturaSeleccionada?.estado === 'PENDIENTE'"
+          (click)="procesarSalida(facturaSeleccionada)"
+          data-bs-dismiss="modal">
+          <i class="bi bi-box-arrow-down me-1"></i>Procesar Salida
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

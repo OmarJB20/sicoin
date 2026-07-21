@@ -2,10 +2,8 @@ const pool = require('../config/db');
 
 const registrarMovimiento = async (
     producto_id,
-    usuario_id,
-    tipo_movimiento,
-    cantidad,
-    observacion
+    tipo,
+    cantidad
 ) => {
 
     const client = await pool.connect();
@@ -26,11 +24,11 @@ const registrarMovimiento = async (
         let stockActual = producto.rows[0].stock;
         let nuevoStock = stockActual;
 
-        if (tipo_movimiento === 'ENTRADA') {
+        if (tipo === 'ENTRADA') {
             nuevoStock += cantidad;
         }
 
-        if (tipo_movimiento === 'SALIDA') {
+        if (tipo === 'SALIDA') {
 
             if (stockActual < cantidad) {
                 throw new Error(
@@ -55,21 +53,17 @@ const registrarMovimiento = async (
                 INSERT INTO movimientos_inventario
                 (
                     producto_id,
-                    usuario_id,
-                    tipo_movimiento,
-                    cantidad,
-                    observacion
+                    tipo,
+                    cantidad
                 )
                 VALUES
-                ($1,$2,$3,$4,$5)
+                ($1,$2,$3)
                 RETURNING *
                 `,
                 [
                     producto_id,
-                    usuario_id,
-                    tipo_movimiento,
-                    cantidad,
-                    observacion
+                    tipo,
+                    cantidad
                 ]
             );
 

@@ -1,25 +1,39 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CarritoService, CarritoItem } from '../../core/services/carrito.service';
 import { VentaService } from '../../core/services/venta.service';
+import { FacturaService } from '../../core/services/factura.service';
 import { AuthService } from '../../core/services/auth.service';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-pago',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './pago.component.html',
   styleUrl: './pago.component.css'
 })
 export class PagoComponent implements OnInit {
   items: CarritoItem[] = [];
   total = 0;
+  rolId: number | null = null;
+
+  metodoSeleccionado: string | null = null;
+
+  formFactura: any = {
+    nombre_cliente: '',
+    cedula_ruc: '',
+    direccion: '',
+    correo: '',
+    telefono: ''
+  };
 
   constructor(
     private carritoService: CarritoService,
     private ventaService: VentaService,
+    private facturaService: FacturaService,
     private authService: AuthService,
     private router: Router
   ) {}
@@ -28,9 +42,88 @@ export class PagoComponent implements OnInit {
     this.items = this.carritoService.obtenerItems();
     this.total = this.carritoService.obtenerTotal();
 
+    const user: any = this.authService.getUser();
+    this.rolId = user?.rol_id ?? null;
+
     if (this.items.length === 0) {
       this.router.navigate(['/catalogo']);
     }
+  }
+
+  get formularioCompleto(): boolean {
+    return !!(
+      this.formFactura.nombre_cliente.trim() &&
+      this.formFactura.cedula_ruc.trim() &&
+      this.formFactura.direccion.trim() &&
+      this.formFactura.correo.trim() &&
+      this.formFactura.telefono.trim()
+    );
+  }
+
+  seleccionarMetodo(metodo: string) {
+    if (this.rolId === 4) {
+      this.metodoSeleccionado = metodo;
+    } else {
+      this.pagar(metodo);
+    }
+  }
+
+  cancelarFactura() {
+    this.metodoSeleccionado = null;
+    this.formFactura = {
+      nombre_cliente: '',
+      cedula_ruc: '',
+      direccion: '',
+      correo: '',
+      telefono: ''
+    };
+  }
+
+  generarFactura() {
+    if (!this.formularioCompleto) return;
+
+    const productos = this.items.map(item => ({
+      producto_id: item.producto_id,
+      cantidad: item.cantidad
+    }));
+
+    const data = {
+      productos,
+      nombre_cliente: this.formFactura.nombre_cliente.trim(),
+      cedula_ruc: this.formFactura.cedula_ruc.trim(),
+      direccion: this.formFactura.direccion.trim(),
+      correo: this.formFactura.correo.trim(),
+      telefono: this.formFactura.telefono.trim(),
+      metodo_pago: this.metodoSeleccionado
+    };
+
+    this.facturaService.crear(data).subscribe({
+      next: () => {
+        Swal.fire({
+          title: 'Factura Generada',
+          text: 'La factura fue registrada exitosamente. El bodeguero procesará la salida.',
+          icon: 'success',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#0f7c75'
+        }).then(() => {
+          this.carritoService.limpiar();
+          this.items = [];
+          this.total = 0;
+          this.metodoSeleccionado = null;
+          this.formFactura = {
+            nombre_cliente: '',
+            cedula_ruc: '',
+            direccion: '',
+            correo: '',
+            telefono: ''
+          };
+          this.router.navigate(['/catalogo']);
+        });
+      },
+      error: (err) => {
+        Swal.fire('Error', err.error?.mensaje || 'No se pudo generar la factura', 'error');
+      }
+    });
   }
 
   pagar(metodo: string) {

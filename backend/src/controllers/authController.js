@@ -92,7 +92,7 @@ const login = async (req, res) => {
         }
 
         let cliente_id = null;
-        if (usuario.rol_id === 3) {
+        if (usuario.rol_id === 3 || usuario.rol_id === 4) {
             let cliente = await clienteModel.buscarPorCorreo(correo);
 
             if (!cliente) {

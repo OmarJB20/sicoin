@@ -29,7 +29,7 @@ export class LoginComponent {
       this.authService.saveToken(res.token);
 
       const user: any = jwtDecode(res.token);
-      if (user.rol_id === 3) {
+      if (user.rol_id === 3 || user.rol_id === 4) {
         this.router.navigate(['/inicio']);
       } else {
         this.router.navigate(['/dashboard']);

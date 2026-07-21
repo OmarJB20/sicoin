@@ -2,6 +2,11 @@ const autorizacionModel =
 require('../models/autorizacionModel');
 const movimientoModel =
 require('../models/movimientoModel');
+const facturaModel =
+require('../models/facturaModel');
+const {
+    enviarFacturaPDF
+} = require('../services/emailService');
 
 const listarAutorizaciones = async (
     req,
@@ -42,7 +47,8 @@ const crearAutorizacion = async (
             await autorizacionModel.crear(
                 producto_id,
                 cantidad,
-                observacion
+                observacion,
+                req.body.factura_id
             );
 
         res.status(201).json({
@@ -88,11 +94,63 @@ const actualizarEstado = async (
 
             await movimientoModel.registrarMovimiento(
                 autorizacion.producto_id,
-                req.usuario.id,
                 'SALIDA',
-                autorizacion.cantidad,
-                'Salida autorizada por bodeguero'
+                autorizacion.cantidad
             );
+
+            if (autorizacion.factura_id) {
+
+                console.log(`Autorización #${id} vinculada a factura #${autorizacion.factura_id}`);
+
+                await facturaModel.verificarYCerrarFactura(
+                    autorizacion.factura_id
+                );
+
+                try {
+
+                    const factura =
+                        await facturaModel.obtenerPorId(
+                            autorizacion.factura_id
+                        );
+
+                    console.log(`Factura #${autorizacion.factura_id}: correo=${factura?.correo}, cliente=${factura?.nombre_cliente}`);
+
+                    if (factura && factura.correo) {
+
+                        const detalles =
+                            await facturaModel.obtenerDetalleVenta(
+                                factura.venta_id
+                            );
+
+                        console.log(`Factura #${autorizacion.factura_id}: ${detalles.length} productos encontrados`);
+
+                        await enviarFacturaPDF(
+                            factura,
+                            detalles
+                        );
+
+                        console.log(`Factura #${autorizacion.factura_id}: Email enviado exitosamente`);
+
+                    } else {
+
+                        console.log(`Factura #${autorizacion.factura_id}: No se envía email - correo vacío o factura no encontrada`);
+
+                    }
+
+                } catch (emailError) {
+
+                    console.error(
+                        `Factura #${autorizacion.factura_id}: Error al enviar email -`,
+                        emailError.message
+                    );
+
+                }
+
+            } else {
+
+                console.log(`Autorización #${id}: No tiene factura_id asociada`);
+
+            }
 
         }
 

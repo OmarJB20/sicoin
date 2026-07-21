@@ -48,7 +48,9 @@ export class LayoutComponent implements OnInit, OnDestroy {
     '/catalogo': 'CATÁLOGO',
     '/inicio': 'INICIO',
     '/pago': 'PAGO',
-    '/mis-compras': 'MIS COMPRAS'
+    '/mis-compras': 'MIS COMPRAS',
+    '/facturas-pendientes': 'FACTURAS PENDIENTES',
+    '/mis-facturas': 'MIS FACTURAS'
   };
 
   constructor(

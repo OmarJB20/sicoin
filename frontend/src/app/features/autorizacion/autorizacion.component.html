@@ -16,6 +16,7 @@
                 <th>Producto</th>
                 <th>Cantidad</th>
                 <th>Observación</th>
+                <th>Cliente</th>
                 <th>Estado</th>
                 <th>Fecha</th>
                 <th>Acciones</th>
@@ -26,6 +27,10 @@
                 <td>{{ a.producto }}</td>
                 <td>{{ a.cantidad }}</td>
                 <td class="text-muted small">{{ a.observacion || '—' }}</td>
+                <td>
+                  <span *ngIf="a.nombre_cliente">{{ a.nombre_cliente }}<br><small class="text-muted">{{ a.cedula_ruc }}</small></span>
+                  <span *ngIf="!a.nombre_cliente" class="text-muted">—</span>
+                </td>
                 <td>
                   <span class="badge rounded-pill"
                     [class.bg-warning]="a.estado === 'PENDIENTE'"

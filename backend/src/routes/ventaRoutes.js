@@ -7,6 +7,7 @@ require('../middlewares/authMiddleware');
 
 const {
     registrarVenta,
+    registrarVentaPendiente,
     listarVentas,
     detalleVenta,
     anularVenta,
@@ -48,6 +49,12 @@ router.put(
     '/:id/anular',
     verificarToken,
     anularVenta
+);
+
+router.post(
+    '/pendiente',
+    verificarToken,
+    registrarVentaPendiente
 );
 
 module.exports = router;
